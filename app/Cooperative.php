@@ -231,6 +231,24 @@ class Cooperative {
         }
     }
     
+    // Get cooperatives by district
+    public function getCooperativesByDistrict($districtId) {
+        try {
+            // For now, return empty array since cooperatives table doesn't exist yet
+            // In future, this would query cooperatives table by district_id
+            return [];
+            
+            // Future implementation:
+            // $stmt = $this->coopDB->prepare("
+            //     SELECT id, nama FROM cooperatives WHERE district_id = ? ORDER BY nama
+            // ");
+            // $stmt->execute([$districtId]);
+            // return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+    
     // Check if any cooperative exists
     public function hasCooperatives() {
         try {

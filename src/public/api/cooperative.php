@@ -53,6 +53,12 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 echo json_encode(['success' => true, 'data' => $villages]);
                 break;
                 
+            case 'cooperatives_by_district':
+                $districtId = intval($_GET['district_id'] ?? 0);
+                $cooperatives = $cooperative->getCooperativesByDistrict($districtId);
+                echo json_encode(['success' => true, 'data' => $cooperatives]);
+                break;
+                
             default:
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Invalid action']);

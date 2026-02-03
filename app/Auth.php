@@ -24,7 +24,7 @@ class Auth {
     public function register($data) {
         try {
             // Validate required fields
-            $required = ['nama', 'email', 'password', 'phone'];
+            $required = ['nama', 'email', 'password', 'phone', 'village_id', 'full_address'];
             foreach ($required as $field) {
                 if (empty($data[$field])) {
                     return ['success' => false, 'message' => "Field $field is required"];
@@ -63,6 +63,12 @@ class Auth {
                 ");
                 $stmt->execute([$userId, $data['nik']]);
             }
+            
+            // Add address record
+            $stmt = $this->peopleDB->prepare("
+                INSERT INTO addresses (user_id, village_id, full_address) VALUES (?, ?, ?)
+            ");
+            $stmt->execute([$userId, $data['village_id'], $data['full_address']]);
             
             // Assign default role (calon_anggota)
             $roleStmt = $this->coopDB->prepare("SELECT id FROM roles WHERE name = 'calon_anggota'");
