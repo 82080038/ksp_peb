@@ -1,0 +1,39 @@
+# Environment files
+config/.env
+config/.env.*
+
+# Logs
+logs/*
+*.log
+
+# Temporary files
+temp/*
+*.tmp
+*.swp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Vendor and dependencies (if any)
+vendor/
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+
+# Database files (if local)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.backup
+*.old
