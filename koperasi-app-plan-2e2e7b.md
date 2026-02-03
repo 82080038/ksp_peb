@@ -130,11 +130,12 @@ Relasi lintas DB via service layer dengan kunci natural (user_uuid) dan caching 
 ## Flow Register & Alamat
 - Kondisi awal tanpa koperasi: UI hanya menampilkan tab “Register Koperasi”; setelah koperasi pertama dibuat, tab “Register User” muncul berdampingan.
 - Register koperasi: form wajib (nama koperasi, jenis/tipe, nomor badan hukum/akta, tanggal pendirian, NPWP, alamat legal, kontak resmi, logo, periode tahun buku, konfigurasi awal simpanan wajib/pokok, bunga pinjaman, denda telat, periode SHU). Setelah submit: buat record di coop DB, tenant config, default COA, role Super Admin pengusul.
-- Register user (setelah ada koperasi): pilih koperasi (atau terikat tenant), isi identitas dasar (nama, email/HP), role awal (anggota/pengurus/pengawas/pegawai), verifikasi OTP/email; link ke people DB, lalu ke coop DB.
+- Register user (setelah ada koperasi): pilih koperasi (atau terikat tenant), isi identitas dasar (nama, email/HP), role awal (anggota/pengurus/pengawas/pegawai), auto-aktif tanpa verifikasi OTP; link ke people DB, lalu ke coop DB.
+- PENDING: Implementasi verifikasi email/HP via OTP untuk keamanan tambahan (simpan sebagai pengingat untuk pengembangan selanjutnya).
 - Alamat combo hirarkis: dropdown berantai province → city/kabupaten → district/kecamatan → village/kelurahan; detail alamat (jalan, RT/RW, kode pos, koordinat opsional) baru aktif setelah village dipilih. API: `GET /geo/provinces`, `GET /geo/cities?province_id=`, `GET /geo/districts?city_id=`, `GET /geo/villages?district_id=`; simpan ke address DB dan referensi ke user/koperasi.
 - Prefill alamat untuk personil yang daftar mandiri: combo alamat user mengisi otomatis sampai tingkat kabupaten; koperasi memakai referensi kabupaten yang sama, sementara detail bawah (kecamatan/kelurahan/jalan) diisi user.
 - NIK wajib untuk setiap user (validasi unik & format) saat registrasi; untuk personil juga wajib NRP/NIP.
-- Identitas wajib: nomor HP, email (unik), jenis kelamin, suku, agama, pekerjaan, status kawin; referensi ke tabel master (religions, ethnicities, occupations); verifikasi email/HP via OTP.
+- Identitas wajib: nomor HP, email (unik), jenis kelamin, suku, agama, pekerjaan, status kawin; referensi ke tabel master (religions, ethnicities, occupations); PENDING: verifikasi email/HP via OTP untuk keamanan tambahan.
 - Dokumen identitas: unggah foto/scan KTP dan foto diri (selfie) wajib; simpan path di `identities` atau `attachments` (ref_type=user); opsional verifikasi wajah (face match KTP) dan cek keabsahan NIK.
 
 ## Jenis Koperasi Saat Register (Multi-tipe & Aktivasi Modul)
@@ -803,7 +804,15 @@ Format audit log (JSON contoh):
 - `GET /verify/doc/{id}` → `{ "status": "valid", "ref_type": "so", "ref_id": 1101, "hash": "abc123", "issued_at": "2026-02-03T09:38:00Z" }` atau `{ "status": "invalid" }`.
 - Jika hash mismatch atau dokumen kedaluwarsa, kembalikan `status:"invalid"` + alasan.
 
-### Payload Tambahan (CRUD utama)
+### Catatan Keamanan & Data (tambahan)
+- Kolom sensitif (NIK/paspor/SIM) disimpan terenkripsi (aplikasi yang mengenkripsi; kolom *_encrypted disiapkan di people_db), dan masking di log/audit.
+- Email/telepon disimpan lengkap tapi tersedia kolom hash untuk logging/lookup tanpa bocor PII; format divalidasi (regex email/telepon) di DB & aplikasi.
+- Consent lifecycle: tambah policy_version, revoked_at, revoked_reason untuk jejak persetujuan; status identities (draft/complete/verified) memantau kelengkapan KYC.
+- Trigger DB memastikan hanya satu is_primary per user untuk addresses/contact_emails/contact_phones; gunakan untuk konsistensi default kontak/alamat.
+- Preferensi & keamanan user: preferred_channel (email/sms/wa/push), preferred_language, timezone, mfa_enabled disimpan di users.
+- KYC lanjut: pep_flag + pep_source, risk_score (low/medium/high) + risk_reason, kyc_last_review_at, kyc_next_review_at, kyc_completeness untuk scoring kelengkapan.
+- Indeks tambahan: pep_flag, risk_score, kyc_next_review_at untuk query screening/prioritas review.
+- Masking view: `v_identities_masked` untuk akses baca terbatas (menyembunyikan NIK/KK/paspor/SIM) agar minim kebocoran PII di sisi read-only.
 - POST /auth/register
   - Body: `{ "nama":"Budi", "email":"budi@mail.com", "phone":"0812...", "password":"***", "tipe_orang":"personil", "nrp_nip":"12345", "pangkat":"Aiptu" }`
   - Response: `{ "user_id": 21, "status":"pending_verification" }`

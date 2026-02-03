@@ -1,4 +1,4 @@
-# Aplikasi Koperasi
+# Aplikasi Koperasi Simpan Pinjam Terpadu (KSP-Peb)
 
 Aplikasi manajemen koperasi modern dengan fitur lengkap untuk mengelola simpanan, pinjaman, dan operasional koperasi.
 
@@ -10,55 +10,86 @@ Aplikasi manajemen koperasi modern dengan fitur lengkap untuk mengelola simpanan
 - Laporan keuangan
 - Notifikasi otomatis
 - Multi-role (anggota, pengurus, pengawas)
+- Voting anggota
+- Distribusi SHU
+- E-commerce dasar
 
 ## Persyaratan Sistem
 
-- Python 3.8+
-- PostgreSQL 12+ atau SQLite3
-- Kafka/RabbitMQ (untuk notifikasi)
+- PHP 7.4 atau lebih tinggi
+- MySQL 5.7+ atau MariaDB 10.0+
+- Apache dengan mod_rewrite (atau web server lain yang mendukung PHP)
+- phpMyAdmin untuk manajemen database (opsional)
 
 ## Instalasi
 
-1. Clone repositori ini
-2. Buat virtual environment:
+1. Clone repositori ini:
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # Linux/Mac
-   # atau
-   .\venv\Scripts\activate  # Windows
+   git clone https://github.com/82080038/ksp_peb.git
+   cd ksp_peb
    ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Salin file konfigurasi:
+
+2. Salin file konfigurasi environment:
    ```bash
    cp config/.env.example config/.env
    ```
-5. Sesuaikan pengaturan di `config/.env` sesuai kebutuhan
+
+3. Edit file `config/.env` dan sesuaikan pengaturan database:
+   ```
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASS=your_password
+   DB_NAME_PEOPLE=people_db
+   DB_NAME_COOP=coop_db
+   DB_NAME_ADDRESS=alamat_db
+   ```
+
+4. Buat database:
+   - Buka phpMyAdmin di http://localhost/phpmyadmin
+   - Jalankan file `sql/people_db.sql` untuk membuat database People DB
+   - Jalankan file `sql/coop_db.sql` untuk membuat database Coop DB
+   - Database Address DB (alamat_db) sudah ada
+
+5. Pastikan Apache dikonfigurasi untuk melayani direktori `src/public` sebagai root dokumen, atau gunakan built-in PHP server untuk development.
 
 ## Menjalankan Aplikasi
 
+### Menggunakan Apache
+Konfigurasi virtual host Apache untuk menunjuk ke `src/public` sebagai DocumentRoot.
+
+### Menggunakan Built-in PHP Server (Development)
 ```bash
-# Mode pengembangan
-export FLASK_APP=src/app.py
-export FLASK_ENV=development
-flask run
+cd src/public
+php -S localhost:8000
 ```
+Kemudian akses http://localhost:8000 di browser.
 
 ## Struktur Proyek
 
 ```
-.
+ksp_peb/
 ├── config/           # File konfigurasi
-├── logs/             # File log aplikasi
+├── logs/             # File log aplikasi (jika ada)
 ├── src/              # Kode sumber aplikasi
+│   ├── bootstrap.php # Bootstrap autoload
+│   └── public/       # Public files (index.php, assets)
+├── sql/              # SQL scripts untuk database
+├── app/              # Classes dan views aplikasi
 ├── temp/             # File sementara
-├── tests/            # Test cases
+├── tests/            # Test cases (jika ada)
 ├── .env.example      # Contoh file environment
-├── requirements.txt  # Dependensi Python
 └── README.md         # Dokumentasi
 ```
+
+## Pengembangan
+
+- Error reporting aktif selama development (lihat config/init.php)
+- Gunakan prepared statements untuk query database
+- Implementasi JWT/session yang aman untuk autentikasi
+
+## API Dokumentasi
+
+API belum diimplementasi. Rencana: RESTful API v1 untuk autentikasi, user management, simpanan, pinjaman, dll.
 
 ## Kontribusi
 

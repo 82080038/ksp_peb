@@ -38,3 +38,4 @@ Ringkasan: Rencana eksekusi bertahap untuk implementasi face match opsional, not
 - Job uji restore otomatis dan laporan hasil.
 - Job review pajak berkala + alert.
 - Dashboard/alert observabilitas biaya & performa.
+- People DB hardening (ditambahkan): indeks pep_flag/risk_score/kyc_next_review_at, masked view `v_identities_masked` untuk akses read-only, trigger single-primary (alamat/email/telepon), kolom prefs & KYC risk di users/identities.

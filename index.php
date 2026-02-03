@@ -1,4 +1,4 @@
 <?php
-// Redirect ke halaman utama
-header("Location: src/public/");
+// Redirect ke halaman test
+header("Location: test.php");
 exit();
