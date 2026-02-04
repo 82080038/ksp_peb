@@ -2,6 +2,35 @@
 CREATE DATABASE IF NOT EXISTS coop_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE coop_db;
 
+-- Cooperative types (konfigurasi jenis koperasi)
+CREATE TABLE IF NOT EXISTS cooperative_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO cooperative_types (name, is_active) VALUES
+('Simpan Pinjam', 1),
+('Konsumsi', 1),
+('Produksi', 1),
+('Pemasaran', 1),
+('Jasa', 1),
+('Serba Usaha', 1)
+ON DUPLICATE KEY UPDATE name = VALUES(name), is_active = VALUES(is_active);
+
+-- Auth users (username/password disimpan di coop_db, refer ke people_db.users via user_db_id)
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    user_db_id INT NOT NULL, -- refer to people_db.users.id
+    status ENUM('active', 'inactive', 'pending') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_users_user_db_id (user_db_id)
+);
+
 -- Roles table
 CREATE TABLE roles (
     id INT AUTO_INCREMENT PRIMARY KEY,

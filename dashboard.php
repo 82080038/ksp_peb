@@ -373,7 +373,11 @@ $coopName = $app->getConfig('coop_name', 'Koperasi Simpan Pinjam');
                             <div>
                                 <strong>${activity.action}</strong>
                                 <br>
-                                <small class="text-muted">${new Date(activity.created_at).toLocaleString('id-ID')}</small>
+                                <small class="text-muted">${new Date(activity.created_at.replace(' ', 'T')).toLocaleDateString('id-ID', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric'
+                                })}</small>
                             </div>
                             <small class="text-muted">${activity.user_name || 'System'}</small>
                         </div>

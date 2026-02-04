@@ -15,14 +15,55 @@ class Cooperative {
         try {
             $this->coopDB->beginTransaction();
             
-            // Validate required fields
-            $required = ['nama', 'jenis', 'badan_hukum', 'tanggal_pendirian', 'npwp', 'alamat_legal', 'kontak_resmi'];
+            // Validate required fields (alamat_legal diambil dari alamat_detail jika tidak ada)
+            $required = ['nama', 'jenis', 'badan_hukum', 'tanggal_pendirian', 'npwp', 'kontak_resmi', 'alamat_detail', 'admin_username', 'admin_email', 'admin_phone', 'admin_password'];
             foreach ($required as $field) {
                 if (empty($data[$field])) {
                     return ['success' => false, 'message' => "Field $field is required"];
                 }
             }
-            
+
+            // Set alamat_legal using detil alamat sebagai sumber utama
+            $alamatLegal = $data['alamat_detail'] ?? ($data['alamat_legal'] ?? null);
+
+            // Prepare address json (id prov-kab-kec-desa + detail)
+            $addressJson = json_encode([
+                'province_id' => $data['province_id'] ?? null,
+                'regency_id' => $data['regency_id'] ?? null,
+                'district_id' => $data['district_id'] ?? null,
+                'village_id' => $data['village_id'] ?? null,
+                'alamat_detail' => $data['alamat_detail'] ?? null
+            ]);
+
+            // Hash admin password
+            $auth = new Auth();
+            $hashedPassword = $auth->hashPassword($data['admin_password']);
+
+            // Ensure admin username unique in coop_db users
+            $userCheck = $this->coopDB->prepare("SELECT id FROM users WHERE username = ?");
+            $userCheck->execute([$data['admin_username']]);
+            if ($userCheck->fetch()) {
+                return ['success' => false, 'message' => 'Username admin sudah digunakan'];
+            }
+
+            // Create or reuse people_db user based on email/phone (tanpa menyimpan password)
+            $peopleUserId = null;
+            $peopleCheck = $this->addressDB->prepare("SELECT id FROM people_db.users WHERE email = ? OR phone = ? LIMIT 1");
+            $peopleCheck->execute([$data['admin_email'], $data['admin_phone']]);
+            $existingPeople = $peopleCheck->fetch();
+            if ($existingPeople) {
+                $peopleUserId = $existingPeople['id'];
+            } else {
+                $peopleInsert = $this->addressDB->prepare("INSERT INTO people_db.users (nama, email, phone, status) VALUES (?, ?, ?, 'active')");
+                $peopleInsert->execute([$data['admin_nama'] ?? $data['admin_username'], $data['admin_email'], $data['admin_phone']]);
+                $peopleUserId = $this->addressDB->lastInsertId();
+            }
+
+            // Insert coop_db auth user linked to people_db
+            $coopUserStmt = $this->coopDB->prepare("INSERT INTO users (username, password_hash, user_db_id, status) VALUES (?, ?, ?, 'active')");
+            $coopUserStmt->execute([$data['admin_username'], $hashedPassword, $peopleUserId]);
+            $coopUserId = $this->coopDB->lastInsertId();
+
             // Insert cooperative
             $stmt = $this->coopDB->prepare("
                 INSERT INTO cooperatives (
@@ -32,14 +73,14 @@ class Cooperative {
                     created_by, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             ");
-            
+
             $stmt->execute([
                 $data['nama'],
                 json_encode($data['jenis']), // Store as JSON for multi-select
                 $data['badan_hukum'],
                 $data['tanggal_pendirian'],
                 $data['npwp'],
-                $data['alamat_legal'],
+                $alamatLegal,
                 $data['kontak_resmi'],
                 $data['logo'] ?? null,
                 $data['periode_tahun_buku'] ?? 'calendar',
@@ -48,9 +89,9 @@ class Cooperative {
                 $data['bunga_pinjaman'] ?? 12,
                 $data['denda_telat'] ?? 2,
                 $data['periode_shu'] ?? 'yearly',
-                $_SESSION['user_id'] ?? null
+                $coopUserId
             ]);
-            
+
             $cooperativeId = $this->coopDB->lastInsertId();
             
             // Create tenant config
@@ -59,16 +100,13 @@ class Cooperative {
             // Create default COA
             $this->createDefaultCOA($cooperativeId);
             
-            // Assign Super Admin role to creator
-            if (isset($_SESSION['user_id'])) {
-                $rbac = new RBAC();
-                $roleStmt = $this->coopDB->prepare("SELECT id FROM roles WHERE name = 'super_admin'");
-                $roleStmt->execute();
-                $role = $roleStmt->fetch();
-                
-                if ($role) {
-                    $rbac->assignRole($_SESSION['user_id'], $role['id']);
-                }
+            // Assign Super Admin role to created admin user
+            $rbac = new RBAC();
+            $roleStmt = $this->coopDB->prepare("SELECT id FROM roles WHERE name = 'super_admin'");
+            $roleStmt->execute();
+            $role = $roleStmt->fetch();
+            if ($role) {
+                $rbac->assignRole($coopUserId, $role['id']);
             }
             
             $this->coopDB->commit();
@@ -222,7 +260,7 @@ class Cooperative {
     public function getVillages($districtId) {
         try {
             $stmt = $this->addressDB->prepare("
-                SELECT id, name FROM villages WHERE district_id = ? ORDER BY name
+                SELECT id, name, postal_code FROM villages WHERE district_id = ? ORDER BY name
             ");
             $stmt->execute([$districtId]);
             return $stmt->fetchAll();
@@ -258,6 +296,17 @@ class Cooperative {
             return $result['count'] > 0;
         } catch (Exception $e) {
             return false;
+        }
+    }
+
+    // Get active cooperative types
+    public function getCooperativeTypes() {
+        try {
+            $stmt = $this->coopDB->prepare("SELECT id, name FROM cooperative_types WHERE is_active = 1 ORDER BY name");
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return [];
         }
     }
 }

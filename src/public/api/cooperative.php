@@ -58,6 +58,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 $cooperatives = $cooperative->getCooperativesByDistrict($districtId);
                 echo json_encode(['success' => true, 'data' => $cooperatives]);
                 break;
+
+            case 'types':
+                $types = $cooperative->getCooperativeTypes();
+                echo json_encode(['success' => true, 'data' => $types]);
+                break;
                 
             default:
                 http_response_code(400);

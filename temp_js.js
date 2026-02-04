@@ -1,166 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Koperasi</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 2rem 0;
-        }
-        .register-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            padding: 2rem;
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .register-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .register-header h2 {
-            color: #333;
-            font-weight: 600;
-        }
-        .location-selection, .cooperativeSelection {
-            margin-bottom: 2rem;
-        }
-        .password-strength-bar {
-            height: 8px;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="register-container">
-            <div class="register-header">
-                <h2>Registrasi Anggota Koperasi</h2>
-                <p class="text-muted">Pilih lokasi koperasi Anda</p>
-            </div>
-
-            <!-- Alert container -->
-            <div id="alert-container"></div>
-
-            <!-- Location Selection -->
-            <div class="location-selection">
-                <div class="row g-3">
-                    <div class="col-12">
-                        <label for="province" class="form-label">Provinsi</label>
-                        <select class="form-select" id="province" required>
-                            <option value="">Pilih Provinsi</option>
-                        </select>
-                    </div>
-                    <div class="col-12">
-                        <label for="regency" class="form-label">Kabupaten/Kota</label>
-                        <select class="form-select" id="regency" disabled required>
-                            <option value="">Pilih Kabupaten/Kota</option>
-                        </select>
-                    </div>
-                    <div class="col-12">
-                        <label for="district" class="form-label">Kecamatan</label>
-                        <select class="form-select" id="district" disabled required>
-                            <option value="">Pilih Kecamatan</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cooperative Selection -->
-            <div id="cooperativeSelection" style="display: none;">
-                <h5 class="mb-3">Pilih Koperasi</h5>
-                
-                <div class="mb-3">
-                    <label for="cooperative" class="form-label">Koperasi</label>
-                    <select class="form-select" id="cooperative">
-                        <option value="">Pilih Koperasi</option>
-                    </select>
-                </div>
-                
-                <div class="d-grid gap-2">
-                    <button type="button" class="btn btn-primary" id="selectCooperative" disabled>
-                        Pilih Koperasi Ini
-                    </button>
-                </div>
-                
-                <div id="noCooperativeMessage" class="alert alert-info mt-3" style="display: none;">
-                    <p class="mb-2">Belum ada koperasi di lokasi ini.</p>
-                    <button type="button" class="btn btn-outline-primary btn-sm" id="createCooperative">
-                        Buat Koperasi Baru
-                    </button>
-                </div>
-            </div>
-
-            <!-- Registration Form -->
-            <form id="registrationForm" style="display: none;">
-                <h5 class="mb-3">Informasi Pendaftaran</h5>
-                
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Nomor HP</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="08123456789" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                        <div class="progress mt-1" style="height: 8px;">
-                            <div class="password-strength-bar bg-danger" id="passwordStrength" style="width: 0%;"></div>
-                        </div>
-                        <small id="passwordStrengthText" class="text-muted"></small>
-                    </div>
-                    <div class="col-12">
-                        <label for="confirm_password" class="form-label">Konfirmasi Password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="village" class="form-label">Desa/Kelurahan</label>
-                        <select class="form-select" id="village" name="village_id" required>
-                            <option value="">Pilih Desa/Kelurahan</option>
-                        </select>
-                    </div>
-                    <div class="col-12">
-                        <label for="full_address" class="form-label">Alamat Lengkap</label>
-                        <textarea class="form-control" id="full_address" name="full_address" rows="3" placeholder="Jl. Contoh No. 123, RT/RW 01/02" required></textarea>
-                    </div>
-                    <!-- Hidden fields for address -->
-                    <input type="hidden" id="address_province" name="address_province">
-                    <input type="hidden" id="address_regency" name="address_regency">
-                    <input type="hidden" id="address_district" name="address_district">
-                </div>
-                
-                <div class="d-grid gap-2 mt-4">
-                    <button type="submit" class="btn btn-success">
-                        <span class="spinner-border spinner-border-sm d-none" id="registerSpinner" role="status"></span>
-                        <span id="registerText">Daftar</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script>
-        // Global variable to store selected cooperative
-        let selectedCooperativeId = null;
-
         document.addEventListener('DOMContentLoaded', function() {
             loadProvinces();
             attachEventListeners();
@@ -246,12 +84,14 @@
                 const provinceId = this.value;
                 const regencySelect = document.getElementById('regency');
                 const districtSelect = document.getElementById('district');
+                const confirmBtn = document.getElementById('confirmLocation');
                 
                 // Reset dependent dropdowns
                 regencySelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
                 districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
                 regencySelect.disabled = true;
                 districtSelect.disabled = true;
+                confirmBtn.disabled = true;
                 
                 if (provinceId) {
                     try {
@@ -273,10 +113,12 @@
             document.getElementById('regency').addEventListener('change', async function() {
                 const regencyId = this.value;
                 const districtSelect = document.getElementById('district');
+                const confirmBtn = document.getElementById('confirmLocation');
                 
                 // Reset dependent dropdowns
                 districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
                 districtSelect.disabled = true;
+                confirmBtn.disabled = true;
                 
                 if (regencyId) {
                     try {
@@ -374,7 +216,7 @@
                 
                 // Confirm with user
                 if (confirm('Anda akan diarahkan ke halaman pendaftaran koperasi. Apakah Anda ingin melanjutkan?')) {
-                    // Redirect to cooperative registration page
+                    // Redirect to cooperative registration page (you'll need to create this)
                     window.location.href = 'register_cooperative.php';
                 }
             });
@@ -503,5 +345,3 @@
             }, 5000);
         }
     </script>
-</body>
-</html>
