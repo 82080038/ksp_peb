@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Koperasi</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -37,6 +38,7 @@
             transition: width 0.3s ease;
         }
     </style>
+    <link href="src/public/css/form-helper.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -77,6 +79,14 @@
             <div id="cooperativeSelection" style="display: none;">
                 <h5 class="mb-3">Pilih Koperasi</h5>
                 
+                <!-- Loading indicator -->
+                <div id="cooperativeLoading" class="text-center mb-3" style="display: none;">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                        <span class="visually-hidden">Memuat...</span>
+                    </div>
+                    <span class="ms-2">Memuat data koperasi...</span>
+                </div>
+                
                 <div class="mb-3">
                     <label for="cooperative" class="form-label">Koperasi</label>
                     <select class="form-select" id="cooperative">
@@ -85,7 +95,7 @@
                 </div>
                 
                 <div class="d-grid gap-2">
-                    <button type="button" class="btn btn-primary" id="selectCooperative" disabled>
+                    <button type="button" class="btn btn-primary" id="selectCooperative" disabled style="display: none;">
                         Pilih Koperasi Ini
                     </button>
                 </div>
@@ -104,66 +114,84 @@
                 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label for="name" class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="mb-3">
+                            <label for="member_name" class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="member_name" name="member_name" required tabindex="1">
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <label for="phone" class="form-label">Nomor HP</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="08123456789" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                        <div class="progress mt-1" style="height: 8px;">
-                            <div class="password-strength-bar bg-danger" id="passwordStrength" style="width: 0%;"></div>
+                        <div class="mb-3">
+                            <label for="member_phone" class="form-label">Nomor HP</label>
+                            <input type="tel" class="form-control" id="member_phone" name="member_phone" placeholder="08123456789" required tabindex="2">
                         </div>
-                        <small id="passwordStrengthText" class="text-muted"></small>
                     </div>
                     <div class="col-12">
-                        <label for="confirm_password" class="form-label">Konfirmasi Password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <label for="member_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="member_email" name="member_email" required tabindex="3">
                     </div>
                     <div class="col-12">
-                        <label for="village" class="form-label">Desa/Kelurahan</label>
-                        <select class="form-select" id="village" name="village_id" required>
+                        <label for="member_username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="member_username" name="member_username" required tabindex="4">
+                    </div>
+                    <div class="col-12">
+                        <label for="member_password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="member_password" name="member_password" required tabindex="5">
+                        <div class="progress mt-1" style="height: 8px;">
+                            <div class="password-strength-bar bg-danger" id="member_passwordStrength" style="width: 0%;"></div>
+                        </div>
+                        <small id="member_passwordStrengthText" class="text-muted"></small>
+                    </div>
+                    <div class="col-12">
+                        <label for="member_confirm_password" class="form-label">Konfirmasi Password</label>
+                        <input type="password" class="form-control" id="member_confirm_password" name="member_confirm_password" required tabindex="6">
+                    </div>
+                    <div class="col-12">
+                        <label for="member_village" class="form-label">Desa/Kelurahan</label>
+                        <select class="form-select" id="member_village" name="member_village_id" required tabindex="7">
                             <option value="">Pilih Desa/Kelurahan</option>
                         </select>
                     </div>
                     <div class="col-12">
-                        <label for="full_address" class="form-label">Alamat Lengkap</label>
-                        <textarea class="form-control" id="full_address" name="full_address" rows="3" placeholder="Jl. Contoh No. 123, RT/RW 01/02" required></textarea>
+                        <label for="member_full_address" class="form-label">Alamat Lengkap</label>
+                        <textarea class="form-control" id="member_full_address" name="member_full_address" rows="3" placeholder="Jl. Contoh No. 123, RT/RW 01/02" required tabindex="8"></textarea>
                     </div>
                     <!-- Hidden fields for address -->
-                    <input type="hidden" id="address_province" name="address_province">
-                    <input type="hidden" id="address_regency" name="address_regency">
-                    <input type="hidden" id="address_district" name="address_district">
+                    <input type="hidden" id="member_address_province" name="member_address_province">
+                    <input type="hidden" id="member_address_regency" name="member_address_regency">
+                    <input type="hidden" id="member_address_district" name="member_address_district">
                 </div>
                 
                 <div class="d-grid gap-2 mt-4">
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn btn-success" id="registerButton">
                         <span class="spinner-border spinner-border-sm d-none" id="registerSpinner" role="status"></span>
                         <span id="registerText">Daftar</span>
                     </button>
                 </div>
             </form>
+
+            <div class="login-link text-center mt-3">
+                <p>Sudah punya akun? <a href="/ksp_peb/login.php">Login disini</a></p>
+                <p><a href="/ksp_peb/register_cooperative.php">Buat Koperasi Baru</a></p>
+            </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="src/public/js/form-helper.js"></script>
+    <script src="src/public/js/avoid-next-error.js"></script>
     <script>
         // Global variable to store selected cooperative
         let selectedCooperativeId = null;
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Reset registration form on page load (keep location selections)
+            FormHelper.resetFormFields('registrationForm', ['province', 'regency', 'district']);
+            
             loadProvinces();
             attachEventListeners();
+            
+            // Setup ENTER key navigation for the form
+            FormHelper.setupEnterKeyNavigation('registrationForm', 'registerButton');
         });
 
         // Load provinces on page load
@@ -177,6 +205,9 @@
                     result.data.forEach(province => {
                         provinceSelect.innerHTML += `<option value="${province.id}">${province.name}</option>`;
                     });
+                    
+                    // Setup focus dropdown behavior for province select
+                    setupFocusDropdown('province');
                 }
             } catch (error) {
                 console.error('Error loading provinces:', error);
@@ -185,61 +216,29 @@
 
         // Load villages for selected district
         async function loadVillages(districtId) {
+            if (!districtId) return;
+            const villageSelect = document.getElementById('member_village');
+            const postalInput = document.getElementById('postal_code');
+            villageSelect.innerHTML = '<option value="">Memuat desa...</option>';
             try {
                 const response = await fetch(`src/public/api/cooperative.php?action=villages&district_id=${districtId}`);
                 const result = await response.json();
                 if (result.success) {
-                    const villageSelect = document.getElementById('village');
                     villageSelect.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
                     result.data.forEach(village => {
-                        villageSelect.innerHTML += `<option value="${village.id}">${village.name}</option>`;
+                        villageSelect.innerHTML += `<option value="${village.id}" data-postal="${village.postal_code}">${village.name}</option>`;
                     });
+                    
+                    // Setup focus dropdown behavior for village select
+                    setupFocusDropdown('member_village');
                 }
             } catch (error) {
                 console.error('Error loading villages:', error);
+                villageSelect.innerHTML = '<option value="">Gagal memuat desa</option>';
             }
         }
 
-        // Load cooperatives for selected district
-        async function loadCooperatives(districtId) {
-            try {
-                const response = await fetch(`src/public/api/cooperative.php?action=cooperatives_by_district&district_id=${districtId}`);
-                const result = await response.json();
-                const cooperativeSelect = document.getElementById('cooperative');
-                const selectBtn = document.getElementById('selectCooperative');
-                const noCoopMessage = document.getElementById('noCooperativeMessage');
-                
-                if (result.success && result.data.length > 0) {
-                    // Cooperatives exist - show selection dropdown
-                    cooperativeSelect.innerHTML = '<option value="">Pilih Koperasi</option>';
-                    result.data.forEach(coop => {
-                        cooperativeSelect.innerHTML += `<option value="${coop.id}">${coop.nama}</option>`;
-                    });
-                    cooperativeSelect.style.display = 'block';
-                    selectBtn.style.display = 'block';
-                    selectBtn.disabled = true;
-                    noCoopMessage.style.display = 'none';
-                    
-                    showAlert('success', 'Koperasi ditemukan di lokasi ini. Silakan pilih koperasi untuk melanjutkan registrasi anggota.');
-                } else {
-                    // No cooperatives - show message and hide selection
-                    cooperativeSelect.style.display = 'none';
-                    selectBtn.style.display = 'none';
-                    noCoopMessage.style.display = 'block';
-                    
-                    showAlert('info', 'Belum ada koperasi di kecamatan ini. Anda dapat membuat koperasi baru.');
-                }
-            } catch (error) {
-                console.error('Error loading cooperatives:', error);
-                const cooperativeSelect = document.getElementById('cooperative');
-                const noCoopMessage = document.getElementById('noCooperativeMessage');
-                cooperativeSelect.innerHTML = '<option value="">Error memuat koperasi</option>';
-                cooperativeSelect.style.display = 'block';
-                noCoopMessage.style.display = 'none';
-            }
-        }
-
-        // Attach all event listeners
+        // Attach event listeners
         function attachEventListeners() {
             // Province change handler
             document.getElementById('province').addEventListener('change', async function() {
@@ -247,24 +246,28 @@
                 const regencySelect = document.getElementById('regency');
                 const districtSelect = document.getElementById('district');
                 
-                // Reset dependent dropdowns
+                // Reset dependent selects
                 regencySelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
-                districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
                 regencySelect.disabled = true;
+                districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
                 districtSelect.disabled = true;
                 
                 if (provinceId) {
                     try {
-                        const response = await fetch(`src/public/api/cooperative.php?action=cities&province_id=${provinceId}`);
+                        const response = await fetch(`src/public/api/cooperative.php?action=regencies&province_id=${provinceId}`);
                         const result = await response.json();
                         if (result.success) {
-                            regencySelect.disabled = false;
+                            regencySelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
                             result.data.forEach(regency => {
                                 regencySelect.innerHTML += `<option value="${regency.id}">${regency.name}</option>`;
                             });
+                            regencySelect.disabled = false;
+                            
+                            // Setup focus dropdown behavior for regency select
+                            setupFocusDropdown('regency');
                         }
                     } catch (error) {
-                        console.error('Error loading cities:', error);
+                        console.error('Error loading regencies:', error);
                     }
                 }
             });
@@ -274,22 +277,27 @@
                 const regencyId = this.value;
                 const districtSelect = document.getElementById('district');
                 
-                // Reset dependent dropdowns
+                // Reset dependent selects
                 districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
                 districtSelect.disabled = true;
                 
                 if (regencyId) {
                     try {
-                        const response = await fetch(`src/public/api/cooperative.php?action=districts&city_id=${regencyId}`);
+                        const response = await fetch(`src/public/api/cooperative.php?action=districts&regency_id=${regencyId}`);
                         const result = await response.json();
                         if (result.success) {
-                            districtSelect.disabled = false;
+                            districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
                             result.data.forEach(district => {
                                 districtSelect.innerHTML += `<option value="${district.id}">${district.name}</option>`;
                             });
+                            districtSelect.disabled = false;
+                            
+                            // Setup focus dropdown behavior for district select
+                            setupFocusDropdown('district');
                         }
                     } catch (error) {
                         console.error('Error loading districts:', error);
+                        districtSelect.innerHTML = '<option value="">Gagal memuat kecamatan</option>';
                     }
                 }
             });
@@ -299,157 +307,186 @@
                 const districtId = this.value;
                 
                 if (districtId) {
-                    // Show cooperative selection section
-                    document.querySelector('.location-selection').style.display = 'none';
-                    document.getElementById('cooperativeSelection').style.display = 'block';
-                    
-                    // Load cooperatives for the selected district
-                    await loadCooperatives(districtId);
-                    
-                    // Also load villages for later use in registration
-                    await loadVillages(districtId);
-                    
-                    // Populate address fields
-                    const provinceName = document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
-                    const regencyName = document.getElementById('regency').options[document.getElementById('regency').selectedIndex].text;
-                    const districtName = this.options[this.selectedIndex].text;
-                    
-                    document.getElementById('address_province').value = provinceName;
-                    document.getElementById('address_regency').value = regencyName;
-                    document.getElementById('address_district').value = districtName;
+                    try {
+                        // Show cooperative selection and loading
+                        document.getElementById('cooperativeSelection').style.display = 'block';
+                        document.getElementById('cooperativeLoading').style.display = 'block';
+                        document.getElementById('noCooperativeMessage').style.display = 'none';
+                        
+                        // Load villages and cooperatives in parallel
+                        const [villagesResult, cooperativesResult] = await Promise.all([
+                            fetch(`src/public/api/cooperative.php?action=villages&district_id=${districtId}`),
+                            fetch(`src/public/api/cooperative.php?action=cooperatives_by_district&district_id=${districtId}`)
+                        ]);
+                        
+                        const villages = await villagesResult.json();
+                        const cooperatives = await cooperativesResult.json();
+                        
+                        // Hide loading
+                        document.getElementById('cooperativeLoading').style.display = 'none';
+                        
+                        // Handle villages
+                        const villageSelect = document.getElementById('member_village');
+                        if (villages.success) {
+                            villageSelect.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
+                            villages.data.forEach(village => {
+                                villageSelect.innerHTML += `<option value="${village.id}" data-postal="${village.postal_code}">${village.name}</option>`;
+                            });
+                            
+                            // Setup focus dropdown behavior for village select
+                            setupFocusDropdown('member_village');
+                        }
+                        
+                        // Handle cooperatives
+                        const cooperativeSelect = document.getElementById('cooperative');
+                        if (cooperatives.success && cooperatives.data.length > 0) {
+                            cooperativeSelect.innerHTML = '<option value="">Pilih Koperasi</option>';
+                            cooperatives.data.forEach(cooperative => {
+                                cooperativeSelect.innerHTML += `<option value="${cooperative.id}">${cooperative.nama}</option>`;
+                            });
+                            
+                            // Setup focus dropdown behavior for cooperative select
+                            setupFocusDropdown('cooperative');
+                            
+                            document.getElementById('selectCooperative').disabled = false;
+                            document.getElementById('selectCooperative').style.display = 'block';
+                            document.getElementById('noCooperativeMessage').style.display = 'none';
+                        } else {
+                            cooperativeSelect.innerHTML = '<option value="">Tidak ada koperasi di kecamatan ini</option>';
+                            document.getElementById('selectCooperative').disabled = true;
+                            document.getElementById('selectCooperative').style.display = 'none';
+                            document.getElementById('noCooperativeMessage').style.display = 'block';
+                        }
+                    } catch (error) {
+                        console.error('Error loading district data:', error);
+                        document.getElementById('cooperativeLoading').style.display = 'none';
+                        // Show user-friendly error
+                    }
+                } else {
+                    // Hide cooperative selection if no district selected
+                    document.getElementById('cooperativeSelection').style.display = 'none';
                 }
             });
 
-            // Cooperative selection change handler
-            document.getElementById('cooperative').addEventListener('change', function() {
-                const selectBtn = document.getElementById('selectCooperative');
-                selectBtn.disabled = !this.value;
+            // Village change handler
+            document.getElementById('member_village').addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const postalCode = selectedOption.getAttribute('data-postal');
+                const postalInput = document.getElementById('postal_code');
+                if (postalInput) {
+                    postalInput.value = postalCode || '';
+                }
             });
 
-            // Select cooperative button - proceed to member registration
+            // Select cooperative button
             document.getElementById('selectCooperative').addEventListener('click', function() {
-                const cooperativeId = document.getElementById('cooperative').value;
-                if (!cooperativeId) {
-                    showAlert('danger', 'Pilih koperasi terlebih dahulu');
-                    return;
+                const cooperativeSelect = document.getElementById('cooperative');
+                selectedCooperativeId = cooperativeSelect.value;
+                
+                if (selectedCooperativeId) {
+                    // Show registration form
+                    document.getElementById('cooperativeSelection').style.display = 'none';
+                    document.getElementById('registrationForm').style.display = 'block';
+                    
+                    // Reset form fields
+                    FormHelper.resetFormFields('registrationForm', ['province', 'regency', 'district']);
+                    
+                    // Scroll to form
+                    document.getElementById('registrationForm').scrollIntoView({ behavior: 'smooth' });
                 }
-                
-                // Store selected cooperative
-                selectedCooperativeId = cooperativeId;
-                
-                // Hide cooperative selection and show registration form
-                document.getElementById('cooperativeSelection').style.display = 'none';
-                document.getElementById('registrationForm').style.display = 'block';
-                
-                // Attach form submit event listener now that the form is visible
-                setTimeout(() => attachRegisterFormListener(), 100);
-                
-                showAlert('success', 'Koperasi berhasil dipilih. Silakan lengkapi informasi pendaftaran anggota.');
             });
 
-            // Create cooperative button - redirect to cooperative registration
+            // Create cooperative button
             document.getElementById('createCooperative').addEventListener('click', function() {
-                // Get selected location data
-                const provinceId = document.getElementById('province').value;
-                const regencyId = document.getElementById('regency').value;
-                const districtId = document.getElementById('district').value;
-                
-                if (!provinceId || !regencyId || !districtId) {
-                    showAlert('danger', 'Pilih lokasi lengkap terlebih dahulu');
-                    return;
-                }
-                
-                // Store location data in session/localStorage for cooperative registration
+                // Store location data in localStorage
                 const locationData = {
-                    province_id: provinceId,
+                    province_id: document.getElementById('province').value,
                     province_name: document.getElementById('province').options[document.getElementById('province').selectedIndex].text,
-                    regency_id: regencyId,
+                    regency_id: document.getElementById('regency').value,
                     regency_name: document.getElementById('regency').options[document.getElementById('regency').selectedIndex].text,
-                    district_id: districtId,
+                    district_id: document.getElementById('district').value,
                     district_name: document.getElementById('district').options[document.getElementById('district').selectedIndex].text
                 };
                 
-                // Store in localStorage for the cooperative registration page
                 localStorage.setItem('cooperativeLocationData', JSON.stringify(locationData));
                 
-                // Confirm with user
-                if (confirm('Anda akan diarahkan ke halaman pendaftaran koperasi. Apakah Anda ingin melanjutkan?')) {
-                    // Redirect to cooperative registration page
-                    window.location.href = 'register_cooperative.php';
-                }
+                // Redirect to cooperative registration page
+                window.location.href = '/ksp_peb/register_cooperative.php';
             });
 
-            // Password strength checker
-            document.getElementById('password').addEventListener('input', function(e) {
-                const password = e.target.value;
-                const strengthBar = document.getElementById('passwordStrength');
-                const strengthText = document.getElementById('passwordStrengthText');
-                
-                let strength = 0;
-                let strengthLabel = '';
-                let strengthColor = 'bg-danger';
-                
-                if (password.length >= 8) strength++;
-                if (password.match(/[a-z]/)) strength++;
-                if (password.match(/[A-Z]/)) strength++;
-                if (password.match(/[0-9]/)) strength++;
-                if (password.match(/[^a-zA-Z0-9]/)) strength++;
-                
-                switch(strength) {
-                    case 0:
-                    case 1:
-                        strengthLabel = 'Sangat lemah';
-                        strengthColor = 'bg-danger';
-                        break;
-                    case 2:
-                        strengthLabel = 'Lemah';
-                        strengthColor = 'bg-warning';
-                        break;
-                    case 3:
-                        strengthLabel = 'Sedang';
-                        strengthColor = 'bg-info';
-                        break;
-                    case 4:
-                        strengthLabel = 'Kuat';
-                        strengthColor = 'bg-primary';
-                        break;
-                    case 5:
-                        strengthLabel = 'Sangat kuat';
-                        strengthColor = 'bg-success';
-                        break;
-                }
-                
-                strengthBar.style.width = (strength * 20) + '%';
-                strengthBar.className = 'password-strength-bar ' + strengthColor;
-                strengthText.textContent = strengthLabel;
-            });
-        }
-        
-        // Attach register form submit listener
-        function attachRegisterFormListener() {
-            const registerForm = document.getElementById('registerForm');
-            if (!registerForm) {
-                console.error('registerForm element not found');
-                return;
-            }
-            
-            registerForm.addEventListener('submit', async function(e) {
+            // Registration form submit
+            document.getElementById('registrationForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const formData = new FormData(e.target);
-                const data = Object.fromEntries(formData);
+                // Define field validation rules
+                const fieldRules = {
+                    'member_name': {
+                        label: 'Nama Lengkap',
+                        required: true,
+                        elementId: 'member_name'
+                    },
+                    'member_phone': {
+                        label: 'Nomor HP',
+                        required: true,
+                        type: 'phone',
+                        elementId: 'member_phone'
+                    },
+                    'member_email': {
+                        label: 'Email',
+                        required: true,
+                        type: 'email',
+                        elementId: 'member_email'
+                    },
+                    'member_username': {
+                        label: 'Username',
+                        required: true,
+                        minLength: 4,
+                        maxLength: 20,
+                        elementId: 'member_username'
+                    },
+                    'member_password': {
+                        label: 'Password',
+                        required: true,
+                        minLength: 6,
+                        elementId: 'member_password'
+                    },
+                    'member_confirm_password': {
+                        label: 'Konfirmasi Password',
+                        required: true,
+                        elementId: 'member_confirm_password',
+                        validate: (value) => {
+                            const password = document.getElementById('member_password').value;
+                            return value === password || 'Password tidak cocok';
+                        }
+                    },
+                    'member_village_id': {
+                        label: 'Desa/Kelurahan',
+                        required: true,
+                        elementId: 'member_village'
+                    },
+                    'member_full_address': {
+                        label: 'Alamat Lengkap',
+                        required: true,
+                        elementId: 'member_full_address'
+                    }
+                };
                 
-                // Validate passwords match
-                if (data.password !== data.confirm_password) {
-                    showAlert('danger', 'Password tidak cocok');
+                // Validate form
+                const validation = FormHelper.validateForm('registrationForm', fieldRules);
+                
+                if (!validation.isValid) {
+                    const errorMessage = FormHelper.showFormErrors(validation.errors);
+                    FormHelper.showAlert('danger', errorMessage);
                     return;
                 }
                 
-                // Validate phone format
-                if (!/^08[0-9]{9,12}$/.test(data.phone)) {
-                    showAlert('danger', 'Format nomor HP tidak valid (contoh: 08123456789)');
-                    return;
-                }
+                const data = validation.data;
+                
+                // Add location data
+                data.member_address_province = document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
+                data.member_address_regency = document.getElementById('regency').options[document.getElementById('regency').selectedIndex].text;
+                data.member_address_district = document.getElementById('district').options[document.getElementById('district').selectedIndex].text;
+                data.cooperative_id = selectedCooperativeId;
                 
                 const registerSpinner = document.getElementById('registerSpinner');
                 const registerText = document.getElementById('registerText');
@@ -457,6 +494,9 @@
                 // Show loading
                 registerSpinner.classList.remove('d-none');
                 registerText.textContent = 'Mendaftar...';
+                
+                // Disable submit button during loading
+                document.getElementById('registerButton').disabled = true;
                 
                 try {
                     const response = await fetch('src/public/api/auth.php?action=register', {
@@ -470,38 +510,50 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        showAlert('success', 'Pendaftaran berhasil! Mengarahkan ke halaman login...');
+                        FormHelper.showAlert('success', 'Pendaftaran berhasil! Mengarahkan ke halaman login...');
                         setTimeout(() => {
-                            window.location.href = 'login.php';
+                            window.location.href = '/ksp_peb/login.php';
                         }, 2000);
                     } else {
-                        showAlert('danger', result.message || 'Pendaftaran gagal');
+                        FormHelper.showAlert('danger', result.message || 'Pendaftaran gagal');
                     }
                 } catch (error) {
-                    showAlert('danger', 'Terjadi kesalahan. Silakan coba lagi.');
+                    FormHelper.showAlert('danger', 'Terjadi kesalahan. Silakan coba lagi.');
                 } finally {
                     // Hide loading
                     registerSpinner.classList.add('d-none');
                     registerText.textContent = 'Daftar';
+                    
+                    // Re-enable submit button
+                    document.getElementById('registerButton').disabled = false;
                 }
             });
-        }
-        
-        function showAlert(type, message) {
-            const alertContainer = document.getElementById('alert-container');
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            alertContainer.appendChild(alertDiv);
-            
-            // Auto dismiss after 5 seconds
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 5000);
-        }
+
+            // Auto-CamelCase for member_full_address on blur
+            const memberFullAddressInput = document.getElementById('member_full_address');
+            if (memberFullAddressInput) {
+                memberFullAddressInput.addEventListener('blur', () => {
+                    if (memberFullAddressInput.value) {
+                        // Convert to Camel Case: "jalan sudirman no 123" -> "Jalan Sudirman No 123"
+                        let value = memberFullAddressInput.value.toLowerCase();
+                        value = value.replace(/\b\w/g, function(match) {
+                            return match.toUpperCase();
+                        });
+                        memberFullAddressInput.value = value;
+                    }
+                });
+            }
+
+            // Auto-uppercase for member_name on blur
+            const memberNameInput = document.getElementById('member_name');
+            if (memberNameInput) {
+                memberNameInput.addEventListener('blur', () => {
+                    if (memberNameInput.value) {
+                        memberNameInput.value = memberNameInput.value.toUpperCase();
+                    }
+                });
+            }
+        } // Closing bracket for attachEventListeners function
     </script>
 </body>
 </html>

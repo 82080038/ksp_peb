@@ -1,0 +1,23 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /ksp_peb/
+
+# Redirect to test page if accessing root
+RewriteRule ^$ test.php [L]
+
+# Handle clean URLs for main pages
+RewriteRule ^login/?$ login.php [L]
+RewriteRule ^register/?$ register.php [L]
+RewriteRule ^dashboard/?$ dashboard.php [L]
+
+# API routes
+RewriteRule ^api/auth/?$ src/public/api/auth.php [L]
+RewriteRule ^api/anggota/?$ src/public/api/anggota.php [L]
+RewriteRule ^api/management/?$ src/public/api/management.php [L]
+RewriteRule ^api/akuntansi/?$ src/public/api/akuntansi.php [L]
+
+# Fallback to public index.php for other routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule (.*) src/public/index.php [L]
+</IfModule>

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIdari RE Error - Monitoring Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        .dashboard-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        .metric-number {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .error-item {
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #f8d7da;
+            border-radius: 5px;
+        }
+        .warning-item {
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #fff3cd;
+            border-radius: 5px;
+        }
+        .info-item {
+            border-left: 4px solid #17a2b8;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #d1ecf1;
+            border-radius: 5px;
+        }
+        .recommendation-card {
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #d4edda;
+            border-radius: 5px;
+        }
+        .high-priority {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .medium-priority {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-healthy { background-color: #28a745; }
+        .status-warning { background-color: #ffc107; }
+        .status-error { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-container">
+            <div class="text-center mb-4">
+                <h1><i class="fas fa-shield-alt"></i> HIdari RE Error Dashboard</h1>
+                <p class="text-muted">Real-time Error Monitoring & Management System</p>
+            </div>
+
+            <!-- System Status -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-number" id="totalErrors">0</div>
+                        <div class="metric-label">Total Errors</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-number" id="criticalErrors">0</div>
+                        <div class="metric-label">Critical Errors</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-number" id="recentErrors">0</div>
+                        <div class="metric-label">Recent (24h)</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-number" id="accessibilityIssues">0</div>
+                        <div class="metric-label">Accessibility Issues</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" onclick="refreshDashboard()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="btn btn-warning" onclick="clearErrors()">
+                            <i class="fas fa-trash"></i> Clear Errors
+                        </button>
+                        <button class="btn btn-info" onclick="generateReport()">
+                            <i class="fas fa-file-alt"></i> Generate Report
+                        </button>
+                        <button class="btn btn-info" onclick="validateLabelFor()">
+                            <i class="fas fa-search"></i> Validate Labels
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-2">
+                    <h3><i class="fas fa-chart-pie"></i> Error Breakdown</h3>
+                    <div class="row">
+                        <div class="col-6">
+                            <h6><i class="fas fa-exclamation-triangle"></i> By Type</h6>
+                            <div id="errorByType"></div>
+                        </div>
+                        <div class="col-6">
+                            <h6><i class="fas fa-file-alt"></i> By File</h6>
+                            <div id="errorByFile"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <h3><i class="fas fa-shield-alt"></i> System Health</h3>
+                    <div class="row">
+                        <div class="col-6">
+                            <h6><i class="fas fa-check-circle"></i> Accessibility</h6>
+                            <div class="metric-number" id="accessibilityScore">100%</div>
+                            <div class="metric-label">Accessibility Score</div>
+                        </div>
+                        <div class="col-6">
+                            <h6><i class="fas fa-exclamation-triangle"></i> Label Issues</h6>
+                            <div class="metric-number" id="accessibilityIssues">0</div>
+                            <div class="metric-label">Label For Issues</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Errors -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h3><i class="fas fa-list"></i> Recent Errors</h3>
+                    <div id="recentErrorsList"></div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h3><i class="fas fa-lightbulb"></i> Recommendations</h3>
+                    <div id="recommendations"></div>
+                </div>
+            </div>
+
+            <!-- Error Details Modal -->
+            <div class="modal fade" id="errorModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Error Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="errorDetails"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../src/public/js/avoid-next-error.js"></script>
+    <script>
+        let errorModal;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            refreshDashboard();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshDashboard, 30000);
+        });
+
+        function refreshDashboard() {
+            if (!window.avoidNextError) {
+                showError('Error monitoring system not loaded');
+                return;
+            }
+
+            const summary = window.avoidNextError.getErrorSummary();
+            updateMetrics(summary);
+            updateErrorBreakdown(summary);
+            updateRecentErrors();
+            updateRecommendations(summary);
+            updateSystemStatus(summary);
+        }
+
+        function updateMetrics(summary) {
+            document.getElementById('totalErrors').textContent = summary.total;
+            document.getElementById('criticalErrors').textContent = summary.critical;
+            document.getElementById('recentErrors').textContent = summary.recent.length;
+            document.getElementById('accessibilityIssues').textContent = summary.accessibility.labelForIssues;
+            
+            // Calculate accessibility score
+            const accessibilityScore = Math.max(0, 100 - (summary.accessibility.labelForIssues * 10));
+            document.getElementById('accessibilityScore').textContent = `${accessibilityScore}%`;
+        }
+
+        function updateErrorBreakdown(summary) {
+            // Errors by type
+            const typeContainer = document.getElementById('errorByType');
+            typeContainer.innerHTML = '';
+            
+            Object.entries(summary.byType).forEach(([type, count]) => {
+                const typeDiv = document.createElement('div');
+                typeDiv.className = 'd-flex justify-content-between align-items-center mb-2';
+                typeDiv.innerHTML = `
+                    <span>${getErrorTypeLabel(type)}</span>
+                    <span class="badge bg-danger">${count}</span>
+                `;
+                typeContainer.appendChild(typeDiv);
+            });
+
+            // Errors by file
+            const fileContainer = document.getElementById('errorByFile');
+            fileContainer.innerHTML = '';
+            
+            Object.entries(summary.byFile).forEach(([file, count]) => {
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'd-flex justify-content-between align-items-center mb-2';
+                fileDiv.innerHTML = `
+                    <span class="text-truncate" style="max-width: 200px;">${getFileName(file)}</span>
+                    <span class="badge bg-warning">${count}</span>
+                `;
+                fileContainer.appendChild(fileDiv);
+            });
+        }
+
+        function updateRecentErrors() {
+            const container = document.getElementById('recentErrorsList');
+            container.innerHTML = '';
+            
+            const errors = window.hidariREError.errors.slice(-10).reverse();
+            
+            if (errors.length === 0) {
+                container.innerHTML = '<div class="alert alert-success">No recent errors! 🎉</div>';
+                return;
+            }
+            
+            errors.forEach(error => {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = getErrorClass(error.type);
+                errorDiv.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>${getErrorTypeLabel(error.type)}</strong>
+                            <div class="small text-muted">${error.message}</div>
+                            <div class="small text-muted">${getFileName(error.filename)} - ${new Date(error.timestamp).toLocaleString()}</div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="showErrorDetails('${window.hidariREError.errors.indexOf(error)}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(errorDiv);
+            });
+        }
+
+        function updateRecommendations(summary) {
+            const container = document.getElementById('recommendations');
+            container.innerHTML = '';
+            
+            if (summary.recommendations.length === 0) {
+                container.innerHTML = '<div class="alert alert-success">No recommendations needed! System is healthy! 🎉</div>';
+                return;
+            }
+            
+            summary.recommendations.forEach(rec => {
+                const recDiv = document.createElement('div');
+                recDiv.className = `recommendation-card ${rec.priority}-priority`;
+                recDiv.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong class="text-uppercase">${rec.priority} priority</strong>
+                            <div>${rec.message}</div>
+                            <div class="small mt-1"><strong>Action:</strong> ${rec.action}</div>
+                        </div>
+                        <span class="badge bg-${rec.priority === 'high' ? 'danger' : rec.priority === 'medium' ? 'warning' : 'info'}">${rec.type}</span>
+                    </div>
+                `;
+                container.appendChild(recDiv);
+            });
+        }
+
+        function updateSystemStatus(summary) {
+            const statusElement = document.getElementById('systemStatus');
+            let statusClass = 'status-healthy';
+            let statusText = 'Healthy';
+            
+            if (summary.critical > 0) {
+                statusClass = 'status-error';
+                statusText = 'Critical';
+            } else if (summary.recent.length > 10 || summary.accessibility.labelForIssues > 3) {
+                statusClass = 'status-warning';
+                statusText = 'Warning';
+            } else if (summary.accessibility.labelForIssues > 0) {
+                statusClass = 'status-info';
+                statusText = 'Minor Issues';
+            }
+            
+            statusElement.innerHTML = `<span class="status-indicator ${statusClass}"></span>`;
+            
+            // Update accessibility score
+            const accessibilityScore = Math.max(0, 100 - (summary.accessibility.labelForIssues * 10));
+            const scoreElement = document.getElementById('accessibilityScore');
+            if (scoreElement) {
+                scoreElement.textContent = `${accessibilityScore}%`;
+            }
+        }
+
+        function getErrorClass(type) {
+            const classMap = {
+                'syntax': 'error-item',
+                'reference': 'error-item',
+                'type': 'error-item',
+                'network': 'warning-item',
+                'form_validation': 'warning-item',
+                'missing_element': 'error-item',
+                'validation_state_mismatch': 'warning-item',
+                'ui_inconsistency': 'warning-item',
+                'promise': 'warning-item',
+                'javascript': 'error-item',
+                'system': 'info-item'
+            };
+            return classMap[type] || 'info-item';
+        }
+
+        function getErrorTypeLabel(type) {
+            const labels = {
+                'syntax': 'Syntax Error',
+                'reference': 'Reference Error',
+                'type': 'Type Error',
+                'network': 'Network Error',
+                'form_validation': 'Form Validation',
+                'missing_element': 'Missing Element',
+                'validation_state_mismatch': 'UI Inconsistency',
+                'promise': 'Promise Rejection',
+                'javascript': 'JavaScript Error',
+                'system': 'System Error'
+            };
+            return labels[type] || type;
+        }
+
+        function getFileName(path) {
+            if (!path) return 'Unknown';
+            return path.split('/').pop() || path;
+        }
+
+        function showErrorDetails(errorIndex) {
+            const error = window.hidariREError.errors[errorIndex];
+            if (!error) return;
+            
+            const detailsDiv = document.getElementById('errorDetails');
+            detailsDiv.innerHTML = `
+                <div class="row">
+                    <div class="col-12">
+                        <h6>Error Information</h6>
+                        <table class="table table-sm">
+                            <tr><td><strong>Type:</strong></td><td>${getErrorTypeLabel(error.type)}</td></tr>
+                            <tr><td><strong>Message:</strong></td><td>${error.message}</td></tr>
+                            <tr><td><strong>Timestamp:</strong></td><td>${new Date(error.timestamp).toLocaleString()}</td></tr>
+                            <tr><td><strong>File:</strong></td><td>${error.filename || 'N/A'}</td></tr>
+                            <tr><td><strong>Line:</strong></td><td>${error.lineno || 'N/A'}</td></tr>
+                            <tr><td><strong>Column:</strong></td><td>${error.colno || 'N/A'}</td></tr>
+                        </table>
+                    </div>
+                </div>
+                ${error.stack ? `
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Stack Trace</h6>
+                        <pre class="bg-light p-2 rounded" style="font-size: 0.8rem; max-height: 200px; overflow-y: auto;">${error.stack}</pre>
+                    </div>
+                </div>
+                ` : ''}
+                ${error.url ? `
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Context</h6>
+                        <p><strong>URL:</strong> ${error.url}</p>
+                        ${error.userAgent ? `<p><strong>User Agent:</strong> ${error.userAgent}</p>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+            
+            errorModal.show();
+        }
+
+        function clearErrors() {
+            if (confirm('Are you sure you want to clear all errors?')) {
+                window.avoidNextError.clearErrors();
+                refreshDashboard();
+                showSuccess('All errors cleared successfully!');
+            }
+        }
+
+        function validateLabelFor() {
+            if (!window.avoidNextError) {
+                showError('Error monitoring system not loaded');
+                return;
+            }
+
+            const issues = window.avoidNextError.validateLabelForAttributes();
+            
+            if (issues.length === 0) {
+                showSuccess('No label for issues found! All labels are correctly associated with their elements. 🎉');
+            } else {
+                showWarning(`${issues.length} label for issue(s) found. Check the recommendations section for details.`);
+            }
+            
+            refreshDashboard();
+        }
+
+        function generateReport() {
+            const summary = window.avoidNextError.getErrorSummary();
+            const report = {
+                generated: new Date().toISOString(),
+                summary: summary,
+                errors: window.avoidNextError.errors,
+                recommendations: summary.recommendations
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `avoid-next-error-report-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccess('Error report generated successfully!');
+        }
+
+        function exportErrors() {
+            const errors = window.avoidNextError.errors;
+            const csv = [
+                ['Timestamp', 'Type', 'Message', 'File', 'Line', 'Column', 'Accessibility Issue', 'Label', 'Element ID', 'Suggested ID'],
+                ...errors.map(error => [
+                    error.timestamp,
+                    error.type,
+                    `"${error.message.replace(/"/g, '""')}"`,
+                    error.filename || 'N/A',
+                    error.lineno || 'N/A',
+                    error.colno || 'N/A',
+                    error.type === 'accessibility' ? 'Yes' : 'No',
+                    error.label || 'N/A',
+                    error.suggestedId || 'N/A'
+                ])
+            ].join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `avoid-next-error-errors-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccess('Errors exported successfully!');
+        }
+
+        function showError(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                <strong>Error!</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                <strong>Success!</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
