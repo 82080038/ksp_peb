@@ -67,6 +67,13 @@ function navLink($href, $icon, $label, $activeRoute) {
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $activeRoute === '/ksp_peb/dashboard/anggota.php' ? 'active' : ''; ?>" href="/ksp_peb/dashboard/anggota.php">
                                     <i class="bi bi-people me-2"></i>Anggota
+                        <?php if ($auth->hasPermission("vote"): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/ksp_peb/voting.php">
+                                <i class="bi bi-ballot-check me-2"></i>Voting
+                            </a>
+                        </li>
+                        <?php endif; ?>
                                 </a>
                             </li>
                         <?php endif; ?>

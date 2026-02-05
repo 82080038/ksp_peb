@@ -163,8 +163,9 @@ $coopName = 'Koperasi Simpan Pinjam';
         .nav-link:hover,
         .nav-link.active {
             color: white;
-            background-color: rgba(255,255,255,0.1);
-            border-left-color: white;
+            background-color: rgba(255,255,255,0.18);
+            border-left-color: red;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
         }
         
         .nav-link i {
@@ -172,6 +173,8 @@ $coopName = 'Koperasi Simpan Pinjam';
             margin-right: 1rem;
             width: 20px;
             text-align: center;
+            color: inherit;
+            opacity: 0.9;
         }
         
         .sidebar.collapsed .nav-link i {
@@ -481,7 +484,7 @@ $coopName = 'Koperasi Simpan Pinjam';
                 <span class="nav-link-text">Cooperative Settings</span>
             </a>
             <a href="#" class="nav-link" data-page="voting">
-                <i class="bi bi-ballot"></i>
+                <i class="bi bi-ui-checks"></i>
                 <span class="nav-link-text">Voting System</span>
             </a>
             <a href="#" class="nav-link" data-page="backup">
@@ -665,33 +668,39 @@ $coopName = 'Koperasi Simpan Pinjam';
                     <p class="page-description">Kelola data anggota koperasi</p>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Daftar Anggota</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Ringkasan</h6></div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li><strong>Total Anggota:</strong> 0</li>
+                                    <li><strong>Aktif:</strong> 0</li>
+                                    <li><strong>Menunggu:</strong> 0</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Nama</th>
-                                        <th>Email</th>
-                                        <th>Status</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="5" class="text-center">
-                                            <div class="alert alert-info">
-                                                <i class="bi bi-info-circle me-2"></i>
-                                                Fitur manajemen anggota sedang dalam pengembangan.
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Daftar Anggota</h6>
+                                <button class="btn btn-sm btn-gradient" data-bs-toggle="modal" data-bs-target="#modalAddMember"><i class="bi bi-person-plus me-1"></i>Tambah</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Nama</th><th>Email</th><th>Status</th><th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td colspan="4" class="text-center text-muted">Data anggota akan tampil di sini.</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -704,12 +713,34 @@ $coopName = 'Koperasi Simpan Pinjam';
                     <p class="page-description">Kelola simpanan anggota koperasi</p>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Daftar Simpanan</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Ringkasan</h6></div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li><strong>Total Simpanan:</strong> Rp 0</li>
+                                    <li><strong>Simpanan Wajib:</strong> Rp 0</li>
+                                    <li><strong>Simpanan Sukarela:</strong> Rp 0</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center">Fitur manajemen simpanan sedang dalam pengembangan.</p>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Transaksi Simpanan</h6>
+                                <button class="btn btn-sm btn-gradient" data-bs-toggle="modal" data-bs-target="#modalAddSaving"><i class="bi bi-plus-circle me-1"></i>Tambah</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead><tr><th>Tanggal</th><th>Anggota</th><th>Jenis</th><th>Jumlah</th></tr></thead>
+                                        <tbody><tr><td colspan="4" class="text-center text-muted">Transaksi akan tampil di sini.</td></tr></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -721,12 +752,34 @@ $coopName = 'Koperasi Simpan Pinjam';
                     <p class="page-description">Kelola pinjaman anggota koperasi</p>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Daftar Pinjaman</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Ringkasan</h6></div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li><strong>Outstanding:</strong> Rp 0</li>
+                                    <li><strong>Disetujui:</strong> 0</li>
+                                    <li><strong>Menunggu:</strong> 0</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center">Fitur manajemen pinjaman sedang dalam pengembangan.</p>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Daftar Pinjaman</h6>
+                                <button class="btn btn-sm btn-gradient" data-bs-toggle="modal" data-bs-target="#modalAddLoan"><i class="bi bi-cash me-1"></i>Ajukan</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead><tr><th>Anggota</th><th>Jumlah</th><th>Status</th><th>Jatuh Tempo</th></tr></thead>
+                                        <tbody><tr><td colspan="4" class="text-center text-muted">Data pinjaman akan tampil di sini.</td></tr></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -738,12 +791,30 @@ $coopName = 'Koperasi Simpan Pinjam';
                     <p class="page-description">Laporan keuangan dan operasional koperasi</p>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Laporan Keuangan</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Laporan Keuangan</h6></div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li><i class="bi bi-file-earmark-text me-1"></i> Neraca</li>
+                                    <li><i class="bi bi-file-earmark-text me-1"></i> Laba Rugi</li>
+                                    <li><i class="bi bi-file-earmark-text me-1"></i> Arus Kas</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center">Fitur laporan sedang dalam pengembangan.</p>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Laporan Operasional</h6></div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li><i class="bi bi-people me-1"></i> Pertumbuhan Anggota</li>
+                                    <li><i class="bi bi-piggy-bank me-1"></i> Tren Simpanan</li>
+                                    <li><i class="bi bi-cash-stack me-1"></i> Tren Pinjaman</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -755,12 +826,34 @@ $coopName = 'Koperasi Simpan Pinjam';
                     <p class="page-description">Kelola pengguna sistem</p>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Daftar User</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Ringkasan</h6></div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li><strong>Total User:</strong> 0</li>
+                                    <li><strong>Aktif:</strong> 0</li>
+                                    <li><strong>Role Terbanyak:</strong> -</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center">Fitur user management sedang dalam pengembangan.</p>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Daftar User</h6>
+                                <button class="btn btn-sm btn-gradient" data-bs-toggle="modal" data-bs-target="#modalAddUser"><i class="bi bi-person-plus me-1"></i>Tambah</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Status</th></tr></thead>
+                                        <tbody><tr><td colspan="4" class="text-center text-muted">Data user akan tampil di sini.</td></tr></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -772,12 +865,29 @@ $coopName = 'Koperasi Simpan Pinjam';
                     <p class="page-description">Kelola peran pengguna</p>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Daftar Role</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Daftar Role</h6>
+                                <button class="btn btn-sm btn-gradient" data-bs-toggle="modal" data-bs-target="#modalAddRole"><i class="bi bi-plus me-1"></i>Tambah</button>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0 text-muted">
+                                    <li>super_admin</li>
+                                    <li>pengawas</li>
+                                    <li>anggota</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center">Fitur role management sedang dalam pengembangan.</p>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Role Default</h6></div>
+                            <div class="card-body">
+                                <p class="text-muted mb-0">Atur role default untuk user baru dan mapping perizinan.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -790,11 +900,26 @@ $coopName = 'Koperasi Simpan Pinjam';
                 </div>
                 
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Daftar Permissions</h5>
-                    </div>
+                    <div class="card-header"><h6 class="mb-0">Daftar Permissions</h6></div>
                     <div class="card-body">
-                        <p class="text-center">Fitur permissions sedang dalam pengembangan.</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled mb-0 text-muted">
+                                    <li>view_members</li>
+                                    <li>manage_members</li>
+                                    <li>view_savings</li>
+                                    <li>manage_savings</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled mb-0 text-muted">
+                                    <li>view_loans</li>
+                                    <li>approve_loans</li>
+                                    <li>manage_votes</li>
+                                    <li>admin_access</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -806,12 +931,30 @@ $coopName = 'Koperasi Simpan Pinjam';
                     <p class="page-description">Pengaturan sistem koperasi</p>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Pengaturan Umum</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Pengaturan Umum</h6></div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0 text-muted">
+                                    <li>Nama Koperasi</li>
+                                    <li>Timezone</li>
+                                    <li>Bahasa Default</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center">Fitur system settings sedang dalam pengembangan.</p>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Keamanan</h6></div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0 text-muted">
+                                    <li>MFA & Password Policy</li>
+                                    <li>Session Timeout</li>
+                                    <li>IP Whitelist</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -824,11 +967,14 @@ $coopName = 'Koperasi Simpan Pinjam';
                 </div>
                 
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Log Aktivitas</h5>
-                    </div>
+                    <div class="card-header"><h6 class="mb-0">Log Aktivitas</h6></div>
                     <div class="card-body">
-                        <p class="text-center">Fitur audit log sedang dalam pengembangan.</p>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead><tr><th>Waktu</th><th>User</th><th>Aksi</th><th>Status</th></tr></thead>
+                                <tbody><tr><td colspan="4" class="text-center text-muted">Catatan audit akan tampil di sini.</td></tr></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -840,12 +986,30 @@ $coopName = 'Koperasi Simpan Pinjam';
                     <p class="page-description">Pengaturan koperasi</p>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Informasi Koperasi</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Informasi Dasar</h6></div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0 text-muted">
+                                    <li>Nama Koperasi</li>
+                                    <li>Jenis Koperasi</li>
+                                    <li>Kontak Resmi</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center">Fitur cooperative settings sedang dalam pengembangan.</p>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Alamat & Legalitas</h6></div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0 text-muted">
+                                    <li>Alamat Legal</li>
+                                    <li>Nomor Badan Hukum</li>
+                                    <li>NPWP</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -857,12 +1021,27 @@ $coopName = 'Koperasi Simpan Pinjam';
                     <p class="page-description">Sistem voting koperasi</p>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Voting Aktif</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Voting Aktif</h6>
+                                <button class="btn btn-sm btn-gradient" data-bs-toggle="modal" data-bs-target="#modalCreateVoting"><i class="bi bi-plus me-1"></i>Buat</button>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0 text-muted">
+                                    <li>Belum ada voting aktif.</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center">Fitur voting system sedang dalam pengembangan.</p>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Hasil Terakhir</h6></div>
+                            <div class="card-body">
+                                <p class="text-muted mb-0">Hasil voting terakhir akan tampil di sini.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -874,12 +1053,24 @@ $coopName = 'Koperasi Simpan Pinjam';
                     <p class="page-description">Backup dan restore data</p>
                 </div>
                 
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Backup Management</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Backup</h6></div>
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Buat backup penuh</span>
+                                <button class="btn btn-sm btn-gradient" data-bs-toggle="modal" data-bs-target="#modalBackup"><i class="bi bi-cloud-arrow-down me-1"></i>Backup</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center">Fitur backup & restore sedang dalam pengembangan.</p>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header"><h6 class="mb-0">Restore</h6></div>
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Unggah file backup</span>
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalRestore"><i class="bi bi-upload me-1"></i>Restore</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -975,6 +1166,70 @@ $coopName = 'Koperasi Simpan Pinjam';
                 console.error('Active link not found for page:', pageId);
             }
         }
+
+        let occupationsData = [];
+
+        // Load occupations for Add Member modal
+        async function loadOccupations() {
+            const select = document.getElementById('pekerjaan');
+            if (!select) return;
+            select.innerHTML = '<option value="">Memuat...</option>';
+            try {
+                const res = await fetch('src/public/api/anggota.php?action=occupations');
+                const data = await res.json();
+                if (data.success && Array.isArray(data.data)) {
+                    occupationsData = data.data;
+                    const count = data.data.length;
+                    select.innerHTML = `<option value="">-(${count}) Pilihan-</option>`;
+                    data.data.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.name;
+                        opt.textContent = item.name;
+                        select.appendChild(opt);
+                    });
+                } else {
+                    select.innerHTML = '<option value="">-(0) Pilihan-</option>';
+                }
+            } catch (e) {
+                select.innerHTML = '<option value="">-(0) Pilihan-</option>';
+            }
+        }
+
+        function applyRanksForOccupation(selectedName) {
+            const rankSelect = document.getElementById('pangkat');
+            if (!rankSelect) return;
+            rankSelect.innerHTML = '';
+            const occ = occupationsData.find(o => (o.name || '').toLowerCase() === (selectedName || '').toLowerCase());
+            if (occ && occ.requires_rank && Array.isArray(occ.ranks) && occ.ranks.length) {
+                rankSelect.disabled = false;
+                rankSelect.innerHTML = `<option value="">-(${occ.ranks.length}) Pangkat-</option>`;
+                occ.ranks.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r;
+                    opt.textContent = (r || '').toUpperCase();
+                    rankSelect.appendChild(opt);
+                });
+            } else {
+                rankSelect.disabled = true;
+                rankSelect.innerHTML = '<option value="">Tidak memerlukan pangkat</option>';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOccupations();
+            const jobSelect = document.getElementById('pekerjaan');
+            const rankSelect = document.getElementById('pangkat');
+            if (rankSelect) {
+                rankSelect.disabled = true;
+                rankSelect.innerHTML = '<option value="">Tidak memerlukan pangkat</option>';
+            }
+            if (jobSelect) {
+                jobSelect.addEventListener('change', function(e) {
+                    applyRanksForOccupation(e.target.value);
+                });
+            }
+        });
 
         // Load page content via AJAX
         function loadPageContent(pageId) {
@@ -1295,5 +1550,532 @@ $coopName = 'Koperasi Simpan Pinjam';
             }
         });
     </script>
+
+    <!-- Cascading dropdown Tambah Anggota -->
+    <script>
+        // Data statis placeholder; ganti ke API backend bila tersedia
+        const INSTANSI_OPTIONS = [
+            { id: 'PEMERINTAH', name: 'Pemerintah' },
+            { id: 'BUMN', name: 'BUMN' },
+            { id: 'BUMD', name: 'BUMD' },
+            { id: 'SWASTA', name: 'Swasta' },
+            { id: 'LAINNYA', name: 'Lainnya' }
+        ];
+
+        const PEKERJAAN_BY_INSTANSI = {
+            PEMERINTAH: [
+                { id: 'PNS', name: 'Pegawai Negeri Sipil', hasRank: true },
+                { id: 'TNI', name: 'Tentara Nasional Indonesia', hasRank: true },
+                { id: 'POLRI', name: 'Kepolisian Negara RI', hasRank: true }
+            ],
+            BUMN: [
+                { id: 'BUMN_STAF', name: 'Pegawai BUMN', hasRank: false }
+            ],
+            BUMD: [
+                { id: 'BUMD_STAF', name: 'Pegawai BUMD', hasRank: false }
+            ],
+            SWASTA: [
+                { id: 'KARYAWAN', name: 'Karyawan Swasta', hasRank: false },
+                { id: 'WIRASWASTA', name: 'Wiraswasta', hasRank: false }
+            ],
+            LAINNYA: [
+                { id: 'LAIN', name: 'Lainnya', hasRank: false }
+            ]
+        };
+
+        const GOLONGAN_BY_PEKERJAAN = {
+            PNS: [
+                { id: 'JURU', name: 'Juru (I)' },
+                { id: 'PENGATUR', name: 'Pengatur (II)' },
+                { id: 'PENATA', name: 'Penata (III)' },
+                { id: 'PEMBINA', name: 'Pembina (IV)' }
+            ],
+            TNI: [
+                { id: 'TAMTAMA', name: 'Tamtama' },
+                { id: 'BINTARA', name: 'Bintara' },
+                { id: 'PERWIRA', name: 'Perwira' }
+            ],
+            POLRI: [
+                { id: 'TAMTAMA', name: 'Tamtama' },
+                { id: 'BINTARA', name: 'Bintara' },
+                { id: 'PERWIRA', name: 'Perwira' }
+            ]
+        };
+
+        const PANGKAT_BY_GOLONGAN = {
+            JURU: [
+                { id: 'I_A', name: 'Juru Muda (I/a)' },
+                { id: 'I_B', name: 'Juru Muda Tingkat I (I/b)' },
+                { id: 'I_C', name: 'Juru (I/c)' },
+                { id: 'I_D', name: 'Juru Tingkat I (I/d)' }
+            ],
+            PENGATUR: [
+                { id: 'II_A', name: 'Pengatur Muda (II/a)' },
+                { id: 'II_B', name: 'Pengatur Muda Tingkat I (II/b)' },
+                { id: 'II_C', name: 'Pengatur (II/c)' },
+                { id: 'II_D', name: 'Pengatur Tingkat I (II/d)' }
+            ],
+            PENATA: [
+                { id: 'III_A', name: 'Penata Muda (III/a)' },
+                { id: 'III_B', name: 'Penata Muda Tingkat I (III/b)' },
+                { id: 'III_C', name: 'Penata (III/c)' },
+                { id: 'III_D', name: 'Penata Tingkat I (III/d)' }
+            ],
+            PEMBINA: [
+                { id: 'IV_A', name: 'Pembina (IV/a)' },
+                { id: 'IV_B', name: 'Pembina Tingkat I (IV/b)' },
+                { id: 'IV_C', name: 'Pembina Utama Muda (IV/c)' },
+                { id: 'IV_D', name: 'Pembina Utama Madya (IV/d)' },
+                { id: 'IV_E', name: 'Pembina Utama (IV/e)' }
+            ],
+            TAMTAMA: [
+                { id: 'T1', name: 'Tamtama Muda' },
+                { id: 'T2', name: 'Tamtama' }
+            ],
+            BINTARA: [
+                { id: 'B1', name: 'Bintara Muda' },
+                { id: 'B2', name: 'Bintara' }
+            ],
+            PERWIRA: [
+                { id: 'P1', name: 'Perwira Muda' },
+                { id: 'P2', name: 'Perwira' },
+                { id: 'P3', name: 'Perwira Tinggi' }
+            ]
+        };
+
+        function resetPekerjaan() {
+            const pekerjaan = document.getElementById('pekerjaan');
+            if (pekerjaan) {
+                pekerjaan.innerHTML = '<option value="">Pilih Pekerjaan</option>';
+                pekerjaan.disabled = true;
+            }
+        }
+
+        function resetGolonganPangkat() {
+            const gol = document.getElementById('golongan');
+            const pangkat = document.getElementById('pangkat');
+            const wrap = document.getElementById('wrap_golongan');
+            if (gol) {
+                gol.innerHTML = '<option value="">Pilih Golongan Pangkat</option>';
+                gol.disabled = true;
+            }
+            if (pangkat) {
+                pangkat.innerHTML = '<option value="">Pilih Pangkat</option>';
+                pangkat.disabled = true;
+            }
+            if (wrap) wrap.style.display = 'none';
+        }
+
+        function loadInstansi() {
+            const instansi = document.getElementById('instansi');
+            if (!instansi) return;
+            instansi.innerHTML = '<option value="">Pilih Jenis Instansi</option>';
+            INSTANSI_OPTIONS.forEach((opt) => {
+                const o = document.createElement('option');
+                o.value = opt.id;
+                o.textContent = opt.name;
+                instansi.appendChild(o);
+            });
+        }
+
+        function loadPekerjaan() {
+            const instansiVal = document.getElementById('instansi')?.value;
+            const pekerjaan = document.getElementById('pekerjaan');
+            resetPekerjaan();
+            resetGolonganPangkat();
+            if (!pekerjaan || !instansiVal) return;
+
+            const list = PEKERJAAN_BY_INSTANSI[instansiVal] || [];
+            if (list.length === 0) return;
+
+            pekerjaan.disabled = false;
+            list.forEach((item) => {
+                const o = document.createElement('option');
+                o.value = item.id;
+                o.textContent = item.name;
+                o.dataset.hasRank = item.hasRank ? '1' : '0';
+                pekerjaan.appendChild(o);
+            });
+        }
+
+        function loadGolongan() {
+            const pekerjaan = document.getElementById('pekerjaan');
+            const selected = pekerjaan?.options[pekerjaan.selectedIndex];
+            const hasRank = selected && selected.dataset.hasRank === '1';
+            const gol = document.getElementById('golongan');
+            const wrapGol = document.getElementById('wrap_golongan');
+            const pangkat = document.getElementById('pangkat');
+
+            if (!gol || !pangkat || !wrapGol) return;
+
+            gol.innerHTML = '<option value="">Pilih Golongan Pangkat</option>';
+            pangkat.innerHTML = '<option value="">Pilih Pangkat</option>';
+            gol.disabled = true;
+            pangkat.disabled = true;
+            wrapGol.style.display = 'none';
+
+            if (!selected || !hasRank) {
+                pangkat.innerHTML = '<option value="">Tidak memerlukan pangkat</option>';
+                return;
+            }
+
+            const list = GOLONGAN_BY_PEKERJAAN[selected.value] || [];
+            if (list.length === 0) return;
+
+            wrapGol.style.display = 'block';
+            gol.disabled = false;
+            list.forEach((item) => {
+                const o = document.createElement('option');
+                o.value = item.id;
+                o.textContent = item.name;
+                gol.appendChild(o);
+            });
+        }
+
+        function loadPangkat() {
+            const gol = document.getElementById('golongan');
+            const pangkat = document.getElementById('pangkat');
+            if (!gol || !pangkat) return;
+
+            pangkat.innerHTML = '<option value="">Pilih Pangkat</option>';
+            pangkat.disabled = true;
+
+            if (!gol.value) return;
+            const list = PANGKAT_BY_GOLONGAN[gol.value] || [];
+            if (list.length === 0) return;
+
+            pangkat.disabled = false;
+            list.forEach((item) => {
+                const o = document.createElement('option');
+                o.value = item.id;
+                o.textContent = item.name;
+                pangkat.appendChild(o);
+            });
+        }
+
+        // Reset setiap kali modal Tambah Anggota dibuka
+        const modalAdd = document.getElementById('modalAddMember');
+        if (modalAdd) {
+            modalAdd.addEventListener('shown.bs.modal', () => {
+                const form = document.getElementById('formAddMember');
+                if (form) form.reset();
+                loadInstansi();
+                resetPekerjaan();
+                resetGolonganPangkat();
+            });
+        }
+    </script>
 </body>
 </html>
+
+<!-- Modal: Tambah Anggota -->
+<div class="modal fade" id="modalAddMember" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah Anggota</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formAddMember">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Jenis Instansi</label>
+              <select class="form-select" id="instansi" name="instansi" onchange="loadPekerjaan()">
+                <option value="">Pilih Jenis Instansi</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Pekerjaan</label>
+              <select class="form-select" id="pekerjaan" name="pekerjaan" onchange="loadGolongan()" disabled>
+                <option value="">Pilih Pekerjaan</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Pangkat</label>
+              <select class="form-select" id="pangkat" name="pangkat" disabled>
+                <option value="">Pilih Pangkat</option>
+              </select>
+            </div>
+            <div class="col-md-6" id="wrap_golongan" style="display:none;">
+              <label class="form-label">Golongan Pangkat</label>
+              <select class="form-select" id="golongan" name="golongan" onchange="loadPangkat()" disabled>
+                <option value="">Pilih Golongan Pangkat</option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">NRP</label>
+              <input type="text" class="form-control" id="nrp" name="nrp">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">NIK</label>
+              <input type="text" class="form-control" id="nik" name="nik">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Nama</label>
+              <input type="text" class="form-control" id="nama" name="nama" required>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Gender</label>
+              <select class="form-select" id="gender" name="gender">
+                <option value="male">Laki-laki</option>
+                <option value="female">Perempuan</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Agama</label>
+              <select class="form-select" id="agama" name="agama">
+                <option value="islam">Islam</option>
+                <option value="kristen">Kristen</option>
+                <option value="katolik">Katolik</option>
+                <option value="hindu">Hindu</option>
+                <option value="budha">Budha</option>
+                <option value="konghucu">Konghucu</option>
+                <option value="lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Status Kawin</label>
+              <select class="form-select" id="status_kawin" name="status_kawin">
+                <option value="belum_kawin">Belum Kawin</option>
+                <option value="kawin">Kawin</option>
+                <option value="cerai_hidup">Cerai Hidup</option>
+                <option value="cerai_mati">Cerai Mati</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Telepon</label>
+              <input type="text" class="form-control" id="phone" name="phone">
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Status</label>
+              <select class="form-select" id="status" name="status">
+                <option value="active">Aktif</option>
+                <option value="pending">Pending</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-gradient" onclick="submitMember()">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tambah Simpanan -->
+<div class="modal fade" id="modalAddSaving" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah Simpanan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formAddSaving">
+          <div class="mb-3">
+            <label class="form-label">Anggota</label>
+            <input type="text" class="form-control" id="saving_member" name="member" placeholder="Cari anggota">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Jenis Simpanan</label>
+            <select class="form-select" id="saving_jenis" name="jenis">
+              <option value="wajib">Wajib</option>
+              <option value="sukarela">Sukarela</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Jumlah</label>
+            <input type="number" class="form-control" id="saving_jumlah" name="jumlah" min="0" step="1000">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-gradient" onclick="submitSaving()">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tambah Pinjaman -->
+<div class="modal fade" id="modalAddLoan" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ajukan Pinjaman</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formAddLoan">
+          <div class="mb-3">
+            <label class="form-label">Anggota</label>
+            <input type="text" class="form-control" id="loan_member" name="member" placeholder="Cari anggota">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Jumlah</label>
+            <input type="number" class="form-control" id="loan_amount" name="amount" min="0" step="100000">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Tenor (bulan)</label>
+            <input type="number" class="form-control" id="loan_tenor" name="tenor" min="1" max="60">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-gradient" onclick="submitLoan()">Ajukan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tambah User -->
+<div class="modal fade" id="modalAddUser" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formAddUser">
+          <div class="mb-3">
+            <label class="form-label">Nama</label>
+            <input type="text" class="form-control" id="user_nama" name="nama" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" id="user_email" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select class="form-select" id="user_role" name="role">
+              <option value="super_admin">super_admin</option>
+              <option value="pengawas">pengawas</option>
+              <option value="anggota">anggota</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-gradient" onclick="submitUser()">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tambah Role -->
+<div class="modal fade" id="modalAddRole" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah Role</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formAddRole">
+          <div class="mb-3">
+            <label class="form-label">Nama Role</label>
+            <input type="text" class="form-control" id="role_name" name="role" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-gradient" onclick="submitRole()">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Buat Voting -->
+<div class="modal fade" id="modalCreateVoting" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Buat Voting</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formCreateVoting">
+          <div class="mb-3">
+            <label class="form-label">Judul Voting</label>
+            <input type="text" class="form-control" id="voting_title" name="title" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Deskripsi</label>
+            <textarea class="form-control" id="voting_description" name="description" rows="2"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Jenis Voting</label>
+            <select class="form-select" id="voting_type" name="type">
+              <option value="yesno">Ya/Tidak</option>
+              <option value="options">Pilihan Ganda</option>
+              <option value="candidate">Pilih Kandidat</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-gradient" onclick="submitVoting()">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Backup -->
+<div class="modal fade" id="modalBackup" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Backup Data</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-0 text-muted">Konfirmasi pembuatan backup penuh.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-gradient" onclick="submitBackup()">Backup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Restore -->
+<div class="modal fade" id="modalRestore" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Restore Data</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formRestore">
+          <div class="mb-3">
+            <label class="form-label">File Backup</label>
+            <input type="file" class="form-control" id="restore_backup_file" name="backup_file" accept=".sql,.zip">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-gradient" onclick="submitRestore()">Restore</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,18 +3,20 @@
 require_once __DIR__ . '/../../bootstrap.php';
 require_once __DIR__ . '/../../lib/IndonesianHelper.php';
 
+$action = $_GET['action'] ?? '';
+
 $auth = new Auth();
-if (!$auth->isLoggedIn() || (!$auth->hasPermission('view_members') && !$auth->hasPermission('admin_access'))) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => __('access_denied')]);
-    exit;
+if ($action !== 'occupations') {
+    if (!$auth->isLoggedIn() || (!$auth->hasPermission('view_members') && !$auth->hasPermission('admin_access'))) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'message' => __('access_denied')]);
+        exit;
+    }
 }
 
 $app = App::getInstance();
 $coopDB = $app->getCoopDB();
 $peopleDB = $app->getPeopleDB();
-
-$action = $_GET['action'] ?? '';
 $page = intval($_GET['page'] ?? 1);
 $perPage = intval($_GET['per_page'] ?? 10);
 $search = $_GET['search'] ?? '';
@@ -325,6 +327,57 @@ switch ($action) {
             fclose($output);
             exit;
             
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        break;
+
+    case 'occupations':
+        // Return occupations with requires_rank flag and ranks list; union with distinct job_title (no rank info)
+        try {
+            $master = [];
+            $records = [];
+
+            // Master occupations with requires_rank
+            $stmt = $peopleDB->prepare("SELECT id, name, requires_rank FROM occupations WHERE is_active = 1 ORDER BY name");
+            $stmt->execute();
+            $masterRows = $stmt->fetchAll();
+
+            // Ranks for master occupations
+            $ranksMap = [];
+            $stmt = $peopleDB->prepare("SELECT occupation_id, rank_name FROM occupation_ranks WHERE is_active = 1 ORDER BY sort_order, rank_name");
+            $stmt->execute();
+            foreach ($stmt->fetchAll() as $r) {
+                $ranksMap[$r['occupation_id']][] = $r['rank_name'];
+            }
+
+            foreach ($masterRows as $row) {
+                $master[] = [
+                    'name' => $row['name'],
+                    'requires_rank' => (bool)$row['requires_rank'],
+                    'ranks' => $ranksMap[$row['id']] ?? []
+                ];
+            }
+
+            // Distinct job_title from employment_records (if table exists) without rank info
+            try {
+                $stmt = $peopleDB->prepare("SELECT DISTINCT job_title AS name FROM employment_records WHERE job_title IS NOT NULL AND job_title <> '' ORDER BY job_title");
+                $stmt->execute();
+                $records = array_map(function($n){ return ['name'=>$n,'requires_rank'=>false,'ranks'=>[]]; }, array_column($stmt->fetchAll(), 'name'));
+            } catch (Exception $e) {
+                // ignore if table missing
+            }
+
+            // Merge by name unique
+            $mergedAssoc = [];
+            foreach (array_merge($master, $records) as $item) {
+                $key = strtolower(trim($item['name']));
+                if (!isset($mergedAssoc[$key])) {
+                    $mergedAssoc[$key] = $item;
+                }
+            }
+            $merged = array_values($mergedAssoc);
+            echo json_encode(['success' => true, 'data' => $merged]);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
