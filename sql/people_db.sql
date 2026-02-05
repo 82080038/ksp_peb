@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1deb3
+-- version 5.1.1deb5ubuntu1
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 05 Feb 2026 pada 15.46
--- Versi server: 10.11.14-MariaDB-0ubuntu0.24.04.1
--- Versi PHP: 8.3.6
+-- Waktu pembuatan: 06 Feb 2026 pada 06.00
+-- Versi server: 10.6.23-MariaDB-0ubuntu0.22.04.1
+-- Versi PHP: 8.1.2-1ubuntu2.23
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -44,20 +44,6 @@ CREATE TABLE `addresses` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `cooperative_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Trigger `addresses`
---
-DELIMITER $$
-CREATE TRIGGER `trg_addresses_primary` BEFORE INSERT ON `addresses` FOR EACH ROW BEGIN
-    IF NEW.is_primary THEN
-        UPDATE addresses SET is_primary = FALSE WHERE user_id = NEW.user_id$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `trg_addresses_primary_upd` BEFORE UPDATE ON `addresses` FOR EACH ROW BEGIN
-    IF NEW.is_primary AND (OLD.is_primary IS NULL OR OLD.is_primary = FALSE) THEN
-        UPDATE addresses SET is_primary = FALSE WHERE user_id = NEW.user_id$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -177,20 +163,6 @@ CREATE TABLE `contact_emails` (
   `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Trigger `contact_emails`
---
-DELIMITER $$
-CREATE TRIGGER `trg_contact_emails_primary` BEFORE INSERT ON `contact_emails` FOR EACH ROW BEGIN
-    IF NEW.is_primary THEN
-        UPDATE contact_emails SET is_primary = FALSE WHERE user_id = NEW.user_id$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `trg_contact_emails_primary_upd` BEFORE UPDATE ON `contact_emails` FOR EACH ROW BEGIN
-    IF NEW.is_primary AND (OLD.is_primary IS NULL OR OLD.is_primary = FALSE) THEN
-        UPDATE contact_emails SET is_primary = FALSE WHERE user_id = NEW.user_id$$
-DELIMITER ;
-
 -- --------------------------------------------------------
 
 --
@@ -206,20 +178,6 @@ CREATE TABLE `contact_phones` (
   `phone_hash` char(128) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Trigger `contact_phones`
---
-DELIMITER $$
-CREATE TRIGGER `trg_contact_phones_primary` BEFORE INSERT ON `contact_phones` FOR EACH ROW BEGIN
-    IF NEW.is_primary THEN
-        UPDATE contact_phones SET is_primary = FALSE WHERE user_id = NEW.user_id$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `trg_contact_phones_primary_upd` BEFORE UPDATE ON `contact_phones` FOR EACH ROW BEGIN
-    IF NEW.is_primary AND (OLD.is_primary IS NULL OR OLD.is_primary = FALSE) THEN
-        UPDATE contact_phones SET is_primary = FALSE WHERE user_id = NEW.user_id$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -510,117 +468,118 @@ CREATE TABLE `occupations` (
   `name` varchar(100) NOT NULL,
   `is_active` tinyint(1) DEFAULT 1,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
-  `requires_rank` tinyint(1) NOT NULL DEFAULT 0
+  `requires_rank` tinyint(1) NOT NULL DEFAULT 0,
+  `category` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data untuk tabel `occupations`
 --
 
-INSERT INTO `occupations` (`id`, `name`, `is_active`, `created_at`, `requires_rank`) VALUES
-(1, 'BELUM/TIDAK BEKERJA', 1, '2026-02-05 05:50:36', 0),
-(2, 'MENGURUS RUMAH TANGGA', 1, '2026-02-05 05:50:36', 0),
-(3, 'PELAJAR/MAHASISWA', 1, '2026-02-05 05:50:36', 0),
-(4, 'PENSIUNAN', 1, '2026-02-05 05:50:36', 0),
-(5, 'PEGAWAI NEGERI SIPIL', 1, '2026-02-05 05:50:36', 1),
-(6, 'TENTARA NASIONAL INDONESIA', 1, '2026-02-05 05:50:36', 1),
-(7, 'KEPOLISIAN RI', 1, '2026-02-05 05:50:36', 1),
-(8, 'PERDAGANGAN', 1, '2026-02-05 05:50:36', 0),
-(9, 'PETANI/PEKEBUN', 1, '2026-02-05 05:50:36', 0),
-(10, 'PETERNAK', 1, '2026-02-05 05:50:36', 0),
-(11, 'NELAYAN/PERIKANAN', 1, '2026-02-05 05:50:36', 0),
-(12, 'INDUSTRI', 1, '2026-02-05 05:50:36', 0),
-(13, 'KONSTRUKSI', 1, '2026-02-05 05:50:36', 0),
-(14, 'TRANSPORTASI', 1, '2026-02-05 05:50:36', 0),
-(15, 'KARYAWAN SWASTA', 1, '2026-02-05 05:50:36', 0),
-(16, 'KARYAWAN BUMN', 1, '2026-02-05 05:50:36', 0),
-(17, 'KARYAWAN BUMD', 1, '2026-02-05 05:50:36', 0),
-(18, 'KARYAWAN HONORER', 1, '2026-02-05 05:50:36', 0),
-(19, 'BURUH HARIAN LEPAS', 1, '2026-02-05 05:50:36', 0),
-(20, 'BURUH TANI/PERKEBUNAN', 1, '2026-02-05 05:50:36', 0),
-(21, 'BURUH NELAYAN/PERIKANAN', 1, '2026-02-05 05:50:36', 0),
-(22, 'BURUH PETERNAKAN', 1, '2026-02-05 05:50:36', 0),
-(23, 'TUKANG CUKUR', 1, '2026-02-05 05:50:36', 0),
-(24, 'TUKANG LISTRIK', 1, '2026-02-05 05:50:36', 0),
-(25, 'TUKANG BATU', 1, '2026-02-05 05:50:36', 0),
-(26, 'TUKANG KAYU', 1, '2026-02-05 05:50:36', 0),
-(27, 'TUKANG SOL SEPATU', 1, '2026-02-05 05:50:36', 0),
-(28, 'TUKANG LAS/PANDAI BESI', 1, '2026-02-05 05:50:36', 0),
-(29, 'TUKANG JAHIT', 1, '2026-02-05 05:50:36', 0),
-(30, 'TUKANG GIGI', 1, '2026-02-05 05:50:36', 0),
-(31, 'PENATA RIAS', 1, '2026-02-05 05:50:36', 0),
-(32, 'PENATA BUSANA', 1, '2026-02-05 05:50:36', 0),
-(33, 'PENATA RAMBUT', 1, '2026-02-05 05:50:36', 0),
-(34, 'MEKANIK', 1, '2026-02-05 05:50:36', 0),
-(35, 'SENIMAN', 1, '2026-02-05 05:50:36', 0),
-(36, 'TABIB', 1, '2026-02-05 05:50:36', 0),
-(37, 'PARAJI', 1, '2026-02-05 05:50:36', 0),
-(38, 'PERANCANG BUSANA', 1, '2026-02-05 05:50:36', 0),
-(39, 'PENTERJEMAH', 1, '2026-02-05 05:50:36', 0),
-(40, 'IMAM MASJID', 1, '2026-02-05 05:50:36', 0),
-(41, 'PENDETA', 1, '2026-02-05 05:50:36', 0),
-(42, 'PASTOR', 1, '2026-02-05 05:50:36', 0),
-(43, 'WARTAWAN', 1, '2026-02-05 05:50:36', 0),
-(44, 'USTADZ/MUBALIGH', 1, '2026-02-05 05:50:36', 0),
-(45, 'JURU MASAK', 1, '2026-02-05 05:50:36', 0),
-(46, 'PROMOTOR ACARA', 1, '2026-02-05 05:50:36', 0),
-(47, 'ANGGOTA DPR-RI', 1, '2026-02-05 05:50:36', 0),
-(48, 'ANGGOTA DPD', 1, '2026-02-05 05:50:36', 0),
-(49, 'ANGGOTA BPK', 1, '2026-02-05 05:50:36', 0),
-(50, 'PRESIDEN', 1, '2026-02-05 05:50:36', 0),
-(51, 'WAKIL PRESIDEN', 1, '2026-02-05 05:50:36', 0),
-(52, 'ANGGOTA MAHKAMAH KONSTITUSI', 1, '2026-02-05 05:50:36', 0),
-(53, 'ANGGOTA KABINET/MENTERI', 1, '2026-02-05 05:50:36', 0),
-(54, 'DUTA BESAR', 1, '2026-02-05 05:50:36', 0),
-(55, 'GUBERNUR', 1, '2026-02-05 05:50:36', 0),
-(56, 'WAKIL GUBERNUR', 1, '2026-02-05 05:50:36', 0),
-(57, 'BUPATI', 1, '2026-02-05 05:50:36', 0),
-(58, 'WAKIL BUPATI', 1, '2026-02-05 05:50:36', 0),
-(59, 'WALIKOTA', 1, '2026-02-05 05:50:36', 0),
-(60, 'WAKIL WALIKOTA', 1, '2026-02-05 05:50:36', 0),
-(61, 'ANGGOTA DPRD PROVINSI', 1, '2026-02-05 05:50:36', 0),
-(62, 'ANGGOTA DPRD KABUPATEN/KOTA', 1, '2026-02-05 05:50:36', 0),
-(63, 'DOSEN', 1, '2026-02-05 05:50:36', 0),
-(64, 'GURU', 1, '2026-02-05 05:50:36', 0),
-(65, 'PILOT', 1, '2026-02-05 05:50:36', 0),
-(66, 'PENGACARA', 1, '2026-02-05 05:50:36', 0),
-(67, 'NOTARIS', 1, '2026-02-05 05:50:36', 0),
-(68, 'ARSITEK', 1, '2026-02-05 05:50:36', 0),
-(69, 'AKUNTAN', 1, '2026-02-05 05:50:36', 0),
-(70, 'KONSULTAN', 1, '2026-02-05 05:50:36', 0),
-(71, 'DOKTER', 1, '2026-02-05 05:50:36', 0),
-(72, 'BIDAN', 1, '2026-02-05 05:50:36', 0),
-(73, 'PERAWAT', 1, '2026-02-05 05:50:36', 0),
-(74, 'APOTEKER', 1, '2026-02-05 05:50:36', 0),
-(75, 'PSIKOLOG/PSIKIATER', 1, '2026-02-05 05:50:36', 0),
-(76, 'PENYULUH PERTANIAN', 1, '2026-02-05 05:50:36', 0),
-(77, 'PENYULUH PERIKANAN', 1, '2026-02-05 05:50:36', 0),
-(78, 'PENYULUH KEHUTANAN', 1, '2026-02-05 05:50:36', 0),
-(79, 'PARAMEDIS', 1, '2026-02-05 05:50:36', 0),
-(80, 'PENELITI', 1, '2026-02-05 05:50:36', 0),
-(81, 'SOPIR', 1, '2026-02-05 05:50:36', 0),
-(82, 'PIALANG', 1, '2026-02-05 05:50:36', 0),
-(83, 'PARANORMAL', 1, '2026-02-05 05:50:36', 0),
-(84, 'PEDAGANG', 1, '2026-02-05 05:50:36', 0),
-(85, 'PERANGKAT DESA', 1, '2026-02-05 05:50:36', 0),
-(86, 'KEPALA DESA', 1, '2026-02-05 05:50:36', 0),
-(87, 'BIARAWATI', 1, '2026-02-05 05:50:36', 0),
-(88, 'WIRASWASTA', 1, '2026-02-05 05:50:36', 0),
-(89, 'ANGGOTA LEMBAGA TINGGI LAINNYA', 1, '2026-02-05 05:50:36', 0),
-(90, 'ARTIS', 1, '2026-02-05 05:50:36', 0),
-(91, 'ATLET', 1, '2026-02-05 05:50:36', 0),
-(92, 'MANAJER', 1, '2026-02-05 05:50:36', 0),
-(93, 'TENAGA AHLI', 1, '2026-02-05 05:50:36', 0),
-(94, 'KEPALA WILAYAH', 1, '2026-02-05 05:50:36', 0),
-(95, 'DOSEN (NON PNS)', 1, '2026-02-05 05:50:36', 0),
-(96, 'GURU (NON PNS)', 1, '2026-02-05 05:50:36', 0),
-(97, 'SWASTA (LAINNYA)', 1, '2026-02-05 05:50:36', 0),
-(98, 'TUKANG JAHIT (NON PNS)', 1, '2026-02-05 05:50:36', 0),
-(99, 'LAINNYA', 1, '2026-02-05 05:50:36', 0),
-(100, 'ASN/PNS', 1, '2026-02-05 05:50:36', 1),
-(101, 'POLSUSPAS', 1, '2026-02-05 05:50:36', 1),
-(102, 'BEA CUKAI', 1, '2026-02-05 05:50:36', 1),
-(103, 'SATPOL PP', 1, '2026-02-05 05:50:36', 1);
+INSERT INTO `occupations` (`id`, `name`, `is_active`, `created_at`, `requires_rank`, `category`) VALUES
+(1, 'BELUM/TIDAK BEKERJA', 1, '2026-02-04 22:50:36', 0, 'Lainnya'),
+(2, 'MENGURUS RUMAH TANGGA', 1, '2026-02-04 22:50:36', 0, 'Lainnya'),
+(3, 'PELAJAR/MAHASISWA', 1, '2026-02-04 22:50:36', 0, 'Lainnya'),
+(4, 'PENSIUNAN', 1, '2026-02-04 22:50:36', 0, 'Lainnya'),
+(5, 'PEGAWAI NEGERI SIPIL', 1, '2026-02-04 22:50:36', 1, 'Pemerintah'),
+(6, 'TENTARA NASIONAL INDONESIA', 1, '2026-02-04 22:50:36', 1, 'Pemerintah'),
+(7, 'KEPOLISIAN RI', 1, '2026-02-04 22:50:36', 1, 'Pemerintah'),
+(8, 'PERDAGANGAN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(9, 'PETANI/PEKEBUN', 1, '2026-02-04 22:50:36', 0, 'Pertanian'),
+(10, 'PETERNAK', 1, '2026-02-04 22:50:36', 0, 'Pertanian'),
+(11, 'NELAYAN/PERIKANAN', 1, '2026-02-04 22:50:36', 0, 'Pertanian'),
+(12, 'INDUSTRI', 1, '2026-02-04 22:50:36', 0, 'Industri'),
+(13, 'KONSTRUKSI', 1, '2026-02-04 22:50:36', 0, 'Industri'),
+(14, 'TRANSPORTASI', 1, '2026-02-04 22:50:36', 0, 'Industri'),
+(15, 'KARYAWAN SWASTA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(16, 'KARYAWAN BUMN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(17, 'KARYAWAN BUMD', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(18, 'KARYAWAN HONORER', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(19, 'BURUH HARIAN LEPAS', 1, '2026-02-04 22:50:36', 0, 'Pertanian'),
+(20, 'BURUH TANI/PERKEBUNAN', 1, '2026-02-04 22:50:36', 0, 'Pertanian'),
+(21, 'BURUH NELAYAN/PERIKANAN', 1, '2026-02-04 22:50:36', 0, 'Pertanian'),
+(22, 'BURUH PETERNAKAN', 1, '2026-02-04 22:50:36', 0, 'Pertanian'),
+(23, 'TUKANG CUKUR', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(24, 'TUKANG LISTRIK', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(25, 'TUKANG BATU', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(26, 'TUKANG KAYU', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(27, 'TUKANG SOL SEPATU', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(28, 'TUKANG LAS/PANDAI BESI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(29, 'TUKANG JAHIT', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(30, 'TUKANG GIGI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(31, 'PENATA RIAS', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(32, 'PENATA BUSANA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(33, 'PENATA RAMBUT', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(34, 'MEKANIK', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(35, 'SENIMAN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(36, 'TABIB', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(37, 'PARAJI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(38, 'PERANCANG BUSANA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(39, 'PENTERJEMAH', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(40, 'IMAM MASJID', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(41, 'PENDETA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(42, 'PASTOR', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(43, 'WARTAWAN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(44, 'USTADZ/MUBALIGH', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(45, 'JURU MASAK', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(46, 'PROMOTOR ACARA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(47, 'ANGGOTA DPR-RI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(48, 'ANGGOTA DPD', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(49, 'ANGGOTA BPK', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(50, 'PRESIDEN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(51, 'WAKIL PRESIDEN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(52, 'ANGGOTA MAHKAMAH KONSTITUSI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(53, 'ANGGOTA KABINET/MENTERI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(54, 'DUTA BESAR', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(55, 'GUBERNUR', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(56, 'WAKIL GUBERNUR', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(57, 'BUPATI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(58, 'WAKIL BUPATI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(59, 'WALIKOTA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(60, 'WAKIL WALIKOTA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(61, 'ANGGOTA DPRD PROVINSI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(62, 'ANGGOTA DPRD KABUPATEN/KOTA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(63, 'DOSEN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(64, 'GURU', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(65, 'PILOT', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(66, 'PENGACARA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(67, 'NOTARIS', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(68, 'ARSITEK', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(69, 'AKUNTAN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(70, 'KONSULTAN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(71, 'DOKTER', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(72, 'BIDAN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(73, 'PERAWAT', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(74, 'APOTEKER', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(75, 'PSIKOLOG/PSIKIATER', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(76, 'PENYULUH PERTANIAN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(77, 'PENYULUH PERIKANAN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(78, 'PENYULUH KEHUTANAN', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(79, 'PARAMEDIS', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(80, 'PENELITI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(81, 'SOPIR', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(82, 'PIALANG', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(83, 'PARANORMAL', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(84, 'PEDAGANG', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(85, 'PERANGKAT DESA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(86, 'KEPALA DESA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(87, 'BIARAWATI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(88, 'WIRASWASTA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(89, 'ANGGOTA LEMBAGA TINGGI LAINNYA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(90, 'ARTIS', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(91, 'ATLET', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(92, 'MANAJER', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(93, 'TENAGA AHLI', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(94, 'KEPALA WILAYAH', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(95, 'DOSEN (NON PNS)', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(96, 'GURU (NON PNS)', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(97, 'SWASTA (LAINNYA)', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(98, 'TUKANG JAHIT (NON PNS)', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(99, 'LAINNYA', 1, '2026-02-04 22:50:36', 0, 'Perdagangan/Jasa'),
+(100, 'ASN/PNS', 1, '2026-02-04 22:50:36', 1, 'Pemerintah'),
+(101, 'POLSUSPAS', 1, '2026-02-04 22:50:36', 1, 'Pemerintah'),
+(102, 'BEA CUKAI', 1, '2026-02-04 22:50:36', 1, 'Pemerintah'),
+(103, 'SATPOL PP', 1, '2026-02-04 22:50:36', 1, 'Pemerintah');
 
 -- --------------------------------------------------------
 
@@ -920,314 +879,21 @@ CREATE TABLE `users` (
   `email` varchar(255) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `password_hash` varchar(255) NOT NULL,
-  `status` enum('active','inactive','pending') DEFAULT 'pending',
-  `preferred_channel` enum('email','sms','wa','push') DEFAULT 'email',
-  `preferred_language` varchar(10) DEFAULT 'id',
-  `timezone` varchar(50) DEFAULT 'Asia/Jakarta',
-  `mfa_enabled` tinyint(1) DEFAULT 0,
-  `created_at` timestamp NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `status` enum('active','inactive','pending') DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `users`
 --
 
-INSERT INTO `users` (`id`, `nama`, `email`, `phone`, `password_hash`, `status`, `preferred_channel`, `preferred_language`, `timezone`, `mfa_enabled`, `created_at`, `updated_at`) VALUES
-(1, 'ADMIN PALING BAIK DI DUNIA', '82080038@koperasi.com', '081910457868', '$2y$10$N.UC2TY6FU5wt70.9cfHvOeCia0FRj.tGZYmsu57jK/a9il9UPP2e', 'active', 'email', 'id', 'Asia/Jakarta', 0, '2026-02-04 17:27:52', '2026-02-04 20:02:03');
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `user_identity_documents`
---
-
-CREATE TABLE `user_identity_documents` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `identity_type_id` int(11) NOT NULL,
-  `document_number` varchar(50) DEFAULT NULL,
-  `issued_date` date DEFAULT NULL,
-  `expiry_date` date DEFAULT NULL,
-  `issuing_authority` varchar(255) DEFAULT NULL,
-  `document_path` varchar(255) DEFAULT NULL,
-  `verified` tinyint(1) DEFAULT 0,
-  `verified_by` int(11) DEFAULT NULL,
-  `verified_at` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Stand-in struktur untuk tampilan `v_identities_masked`
--- (Lihat di bawah untuk tampilan aktual)
---
-CREATE TABLE `v_identities_masked` (
-`id` int(11)
-,`user_id` int(11)
-,`nik_masked` varchar(16)
-,`kk_masked` varchar(16)
-,`passport_masked` varchar(6)
-,`sim_masked` varchar(6)
-,`status` enum('draft','complete','verified')
-,`verified` tinyint(1)
-,`pep_flag` tinyint(1)
-,`risk_score` enum('low','medium','high')
-,`kyc_last_review_at` timestamp
-,`kyc_next_review_at` timestamp
-);
-
--- --------------------------------------------------------
-
---
--- Struktur untuk view `v_identities_masked`
---
-DROP TABLE IF EXISTS `v_identities_masked`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_identities_masked`  AS SELECT `identities`.`id` AS `id`, `identities`.`user_id` AS `user_id`, concat(repeat('X',12),right(`identities`.`nik`,4)) AS `nik_masked`, concat(repeat('X',12),right(`identities`.`nomor_kk`,4)) AS `kk_masked`, concat('***',right(`identities`.`nomor_passport`,3)) AS `passport_masked`, concat('***',right(`identities`.`nomor_sim`,3)) AS `sim_masked`, `identities`.`status` AS `status`, `identities`.`verified` AS `verified`, `identities`.`pep_flag` AS `pep_flag`, `identities`.`risk_score` AS `risk_score`, `identities`.`kyc_last_review_at` AS `kyc_last_review_at`, `identities`.`kyc_next_review_at` AS `kyc_next_review_at` FROM `identities` ;
+INSERT INTO `users` (`id`, `nama`, `email`, `phone`, `password_hash`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'Super Admin 820800', 'admin@koperasi.com', '081234567890', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'active', '2026-02-05 18:17:50', '2026-02-05 18:17:50');
 
 --
 -- Indexes for dumped tables
 --
-
---
--- Indeks untuk tabel `addresses`
---
-ALTER TABLE `addresses`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `idx_addresses_region` (`province_id`,`city_id`,`village_id`),
-  ADD KEY `idx_address_cooperative` (`cooperative_id`);
-
---
--- Indeks untuk tabel `allowed_databases`
---
-ALTER TABLE `allowed_databases`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `db_name` (`db_name`);
-
---
--- Indeks untuk tabel `audit_logs`
---
-ALTER TABLE `audit_logs`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `performed_by` (`performed_by`),
-  ADD KEY `idx_audit_logs_user_time` (`user_id`,`timestamp`);
-
---
--- Indeks untuk tabel `blood_types`
---
-ALTER TABLE `blood_types`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
-
---
--- Indeks untuk tabel `certifications`
---
-ALTER TABLE `certifications`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `consents`
---
-ALTER TABLE `consents`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `contact_emails`
---
-ALTER TABLE `contact_emails`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uq_contact_emails_user_email` (`user_id`,`email`),
-  ADD KEY `idx_contact_emails_hash` (`email_hash`),
-  ADD KEY `idx_contact_emails_primary` (`user_id`,`is_primary`);
-
---
--- Indeks untuk tabel `contact_phones`
---
-ALTER TABLE `contact_phones`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uq_contact_phones_user_phone` (`user_id`,`phone`),
-  ADD KEY `idx_contact_phones_hash` (`phone_hash`),
-  ADD KEY `idx_contact_phones_primary` (`user_id`,`is_primary`);
-
---
--- Indeks untuk tabel `data_subject_requests`
---
-ALTER TABLE `data_subject_requests`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_dsr_user_status` (`user_id`,`status`);
-
---
--- Indeks untuk tabel `education_records`
---
-ALTER TABLE `education_records`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `idx_education_institution` (`institution`);
-
---
--- Indeks untuk tabel `emergency_contacts`
---
-ALTER TABLE `emergency_contacts`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `employment_records`
---
-ALTER TABLE `employment_records`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `idx_employment_company` (`company`);
-
---
--- Indeks untuk tabel `ethnicities`
---
-ALTER TABLE `ethnicities`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
-
---
--- Indeks untuk tabel `family_members`
---
-ALTER TABLE `family_members`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `financial_info`
---
-ALTER TABLE `financial_info`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `genders`
---
-ALTER TABLE `genders`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
-
---
--- Indeks untuk tabel `health_records`
---
-ALTER TABLE `health_records`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `identities`
---
-ALTER TABLE `identities`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `nik` (`nik`),
-  ADD KEY `gender_id` (`gender_id`),
-  ADD KEY `marital_status_id` (`marital_status_id`),
-  ADD KEY `religion_id` (`religion_id`),
-  ADD KEY `ethnicity_id` (`ethnicity_id`),
-  ADD KEY `blood_type_id` (`blood_type_id`),
-  ADD KEY `idx_identities_user` (`user_id`),
-  ADD KEY `idx_identities_nomor_kk` (`nomor_kk`),
-  ADD KEY `idx_identities_pep` (`pep_flag`),
-  ADD KEY `idx_identities_risk` (`risk_score`),
-  ADD KEY `idx_identities_kyc_next_review` (`kyc_next_review_at`);
-
---
--- Indeks untuk tabel `identity_types`
---
-ALTER TABLE `identity_types`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
-
---
--- Indeks untuk tabel `languages`
---
-ALTER TABLE `languages`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `life_events`
---
-ALTER TABLE `life_events`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `marital_statuses`
---
-ALTER TABLE `marital_statuses`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
-
---
--- Indeks untuk tabel `occupations`
---
-ALTER TABLE `occupations`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
-
---
--- Indeks untuk tabel `occupation_ranks`
---
-ALTER TABLE `occupation_ranks`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `occupation_id` (`occupation_id`);
-
---
--- Indeks untuk tabel `physical_attributes`
---
-ALTER TABLE `physical_attributes`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `preferences`
---
-ALTER TABLE `preferences`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `reference_contacts`
---
-ALTER TABLE `reference_contacts`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `religions`
---
-ALTER TABLE `religions`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
-
---
--- Indeks untuk tabel `skills`
---
-ALTER TABLE `skills`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeks untuk tabel `social_profiles`
---
-ALTER TABLE `social_profiles`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `idx_social_platform_user` (`platform`,`username`);
-
---
--- Indeks untuk tabel `travel_history`
---
-ALTER TABLE `travel_history`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indeks untuk tabel `users`
@@ -1237,370 +903,14 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Indeks untuk tabel `user_identity_documents`
---
-ALTER TABLE `user_identity_documents`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `document_number` (`document_number`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `identity_type_id` (`identity_type_id`);
-
---
 -- AUTO_INCREMENT untuk tabel yang dibuang
 --
-
---
--- AUTO_INCREMENT untuk tabel `addresses`
---
-ALTER TABLE `addresses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `allowed_databases`
---
-ALTER TABLE `allowed_databases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT untuk tabel `audit_logs`
---
-ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `blood_types`
---
-ALTER TABLE `blood_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT untuk tabel `certifications`
---
-ALTER TABLE `certifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `consents`
---
-ALTER TABLE `consents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `contact_emails`
---
-ALTER TABLE `contact_emails`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `contact_phones`
---
-ALTER TABLE `contact_phones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `data_subject_requests`
---
-ALTER TABLE `data_subject_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `education_records`
---
-ALTER TABLE `education_records`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `emergency_contacts`
---
-ALTER TABLE `emergency_contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `employment_records`
---
-ALTER TABLE `employment_records`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `ethnicities`
---
-ALTER TABLE `ethnicities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT untuk tabel `family_members`
---
-ALTER TABLE `family_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `financial_info`
---
-ALTER TABLE `financial_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `genders`
---
-ALTER TABLE `genders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT untuk tabel `health_records`
---
-ALTER TABLE `health_records`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `identities`
---
-ALTER TABLE `identities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `identity_types`
---
-ALTER TABLE `identity_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT untuk tabel `languages`
---
-ALTER TABLE `languages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `life_events`
---
-ALTER TABLE `life_events`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `marital_statuses`
---
-ALTER TABLE `marital_statuses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT untuk tabel `occupations`
---
-ALTER TABLE `occupations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
-
---
--- AUTO_INCREMENT untuk tabel `occupation_ranks`
---
-ALTER TABLE `occupation_ranks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=778;
-
---
--- AUTO_INCREMENT untuk tabel `physical_attributes`
---
-ALTER TABLE `physical_attributes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `preferences`
---
-ALTER TABLE `preferences`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `reference_contacts`
---
-ALTER TABLE `reference_contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `religions`
---
-ALTER TABLE `religions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT untuk tabel `skills`
---
-ALTER TABLE `skills`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `social_profiles`
---
-ALTER TABLE `social_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `travel_history`
---
-ALTER TABLE `travel_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT untuk tabel `user_identity_documents`
---
-ALTER TABLE `user_identity_documents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
---
-
---
--- Ketidakleluasaan untuk tabel `addresses`
---
-ALTER TABLE `addresses`
-  ADD CONSTRAINT `addresses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `audit_logs`
---
-ALTER TABLE `audit_logs`
-  ADD CONSTRAINT `audit_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `audit_logs_ibfk_2` FOREIGN KEY (`performed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
---
--- Ketidakleluasaan untuk tabel `certifications`
---
-ALTER TABLE `certifications`
-  ADD CONSTRAINT `certifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `consents`
---
-ALTER TABLE `consents`
-  ADD CONSTRAINT `consents_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `contact_emails`
---
-ALTER TABLE `contact_emails`
-  ADD CONSTRAINT `contact_emails_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `contact_phones`
---
-ALTER TABLE `contact_phones`
-  ADD CONSTRAINT `contact_phones_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `data_subject_requests`
---
-ALTER TABLE `data_subject_requests`
-  ADD CONSTRAINT `data_subject_requests_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `education_records`
---
-ALTER TABLE `education_records`
-  ADD CONSTRAINT `education_records_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `emergency_contacts`
---
-ALTER TABLE `emergency_contacts`
-  ADD CONSTRAINT `emergency_contacts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `employment_records`
---
-ALTER TABLE `employment_records`
-  ADD CONSTRAINT `employment_records_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `family_members`
---
-ALTER TABLE `family_members`
-  ADD CONSTRAINT `family_members_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `financial_info`
---
-ALTER TABLE `financial_info`
-  ADD CONSTRAINT `financial_info_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `health_records`
---
-ALTER TABLE `health_records`
-  ADD CONSTRAINT `health_records_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `identities`
---
-ALTER TABLE `identities`
-  ADD CONSTRAINT `identities_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `identities_ibfk_2` FOREIGN KEY (`gender_id`) REFERENCES `genders` (`id`),
-  ADD CONSTRAINT `identities_ibfk_3` FOREIGN KEY (`marital_status_id`) REFERENCES `marital_statuses` (`id`),
-  ADD CONSTRAINT `identities_ibfk_4` FOREIGN KEY (`religion_id`) REFERENCES `religions` (`id`),
-  ADD CONSTRAINT `identities_ibfk_5` FOREIGN KEY (`ethnicity_id`) REFERENCES `ethnicities` (`id`),
-  ADD CONSTRAINT `identities_ibfk_6` FOREIGN KEY (`blood_type_id`) REFERENCES `blood_types` (`id`);
-
---
--- Ketidakleluasaan untuk tabel `languages`
---
-ALTER TABLE `languages`
-  ADD CONSTRAINT `languages_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `life_events`
---
-ALTER TABLE `life_events`
-  ADD CONSTRAINT `life_events_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `occupation_ranks`
---
-ALTER TABLE `occupation_ranks`
-  ADD CONSTRAINT `occupation_ranks_ibfk_1` FOREIGN KEY (`occupation_id`) REFERENCES `occupations` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `physical_attributes`
---
-ALTER TABLE `physical_attributes`
-  ADD CONSTRAINT `physical_attributes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `preferences`
---
-ALTER TABLE `preferences`
-  ADD CONSTRAINT `preferences_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `reference_contacts`
---
-ALTER TABLE `reference_contacts`
-  ADD CONSTRAINT `reference_contacts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `skills`
---
-ALTER TABLE `skills`
-  ADD CONSTRAINT `skills_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `social_profiles`
---
-ALTER TABLE `social_profiles`
-  ADD CONSTRAINT `social_profiles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `travel_history`
---
-ALTER TABLE `travel_history`
-  ADD CONSTRAINT `travel_history_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `user_identity_documents`
---
-ALTER TABLE `user_identity_documents`
-  ADD CONSTRAINT `user_identity_documents_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `user_identity_documents_ibfk_2` FOREIGN KEY (`identity_type_id`) REFERENCES `identity_types` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
