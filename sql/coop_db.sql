@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1deb5ubuntu1
+-- version 5.2.1deb3
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 05 Feb 2026 pada 04.09
--- Versi server: 10.6.23-MariaDB-0ubuntu0.22.04.1
--- Versi PHP: 8.1.2-1ubuntu2.23
+-- Waktu pembuatan: 05 Feb 2026 pada 15.47
+-- Versi server: 10.11.14-MariaDB-0ubuntu0.24.04.1
+-- Versi PHP: 8.3.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -25,7 +25,7 @@ DELIMITER $$
 --
 -- Prosedur
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `track_document_change` (IN `p_cooperative_id` INT, IN `p_document_type` ENUM('nomor_bh','nib','nik_koperasi','modal_pokok'), IN `p_old_value` VARCHAR(50), IN `p_new_value` VARCHAR(50), IN `p_old_decimal` DECIMAL(15,2), IN `p_new_decimal` DECIMAL(15,2), IN `p_user_id` INT, IN `p_reason` VARCHAR(255))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `track_document_change` (IN `p_cooperative_id` INT, IN `p_document_type` ENUM('nomor_bh','nib','nik_koperasi','modal_pokok'), IN `p_old_value` VARCHAR(50), IN `p_new_value` VARCHAR(50), IN `p_old_decimal` DECIMAL(15,2), IN `p_new_decimal` DECIMAL(15,2), IN `p_user_id` INT, IN `p_reason` VARCHAR(255))   BEGIN
     INSERT INTO cooperative_document_history (
         cooperative_id, 
         document_type, 
@@ -46,10 +46,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `track_document_change` (IN `p_coope
         CURDATE(), 
         p_reason, 
         p_user_id
-    );
-END$$
+    )$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `track_status_change` (IN `p_cooperative_id` INT, IN `p_status_lama` ENUM('belum_terdaftar','terdaftar','badan_hukum'), IN `p_status_baru` ENUM('belum_terdaftar','terdaftar','badan_hukum'), IN `p_user_id` INT, IN `p_reason` VARCHAR(255))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `track_status_change` (IN `p_cooperative_id` INT, IN `p_status_lama` ENUM('belum_terdaftar','terdaftar','badan_hukum'), IN `p_status_baru` ENUM('belum_terdaftar','terdaftar','badan_hukum'), IN `p_user_id` INT, IN `p_reason` VARCHAR(255))   BEGIN
     INSERT INTO cooperative_status_history (
         cooperative_id, 
         status_sebelumnya, 
@@ -64,80 +63,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `track_status_change` (IN `p_coopera
         CURDATE(), 
         p_reason, 
         p_user_id
-    );
-END$$
+    )$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `update_modal_pokok_from_rat` (IN `p_cooperative_id` INT, IN `p_tahun` INT, IN `p_modal_pokok_baru` DECIMAL(15,2), IN `p_alasan` TEXT, IN `p_user_id` INT)  BEGIN
-    DECLARE v_modal_pokok_sebelum DECIMAL(15,2);
-    DECLARE v_persentase_perubahan DECIMAL(5,2);
-    
-    
-    SELECT modal_pokok INTO v_modal_pokok_sebelum
-    FROM cooperatives
-    WHERE id = p_cooperative_id;
-    
-    
-    IF v_modal_pokok_sebelum > 0 THEN
-        SET v_persentase_perubahan = ((p_modal_pokok_baru - v_modal_pokok_sebelum) / v_modal_pokok_sebelum) * 100;
-    ELSE
-        SET v_persentase_perubahan = 0.00;
-    END IF;
-    
-    
-    UPDATE cooperatives 
-    SET modal_pokok = p_modal_pokok_baru, updated_at = CURRENT_TIMESTAMP()
-    WHERE id = p_cooperative_id;
-    
-    
-    UPDATE rat_sessions 
-    SET 
-        modal_pokok_sebelum = v_modal_pokok_sebelum,
-        modal_pokok_setelah = p_modal_pokok_baru,
-        persentase_perubahan = v_persentase_perubahan,
-        status = 'completed',
-        updated_at = CURRENT_TIMESTAMP()
-    WHERE cooperative_id = p_cooperative_id AND tahun = p_tahun;
-    
-    
-    INSERT INTO modal_pokok_changes (
-        cooperative_id, modal_pokok_lama, modal_pokok_baru, persentase_perubahan,
-        tanggal_efektif, perubahan_type, referensi_id, alasan_perubahan, user_id
-    ) VALUES (
-        p_cooperative_id, v_modal_pokok_sebelum, p_modal_pokok_baru, v_persentase_perubahan,
-        CURDATE(), 'rat', LAST_INSERT_ID(), p_alasan, p_user_id
-    );
-END$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_modal_pokok_from_rat` (IN `p_cooperative_id` INT, IN `p_tahun` INT, IN `p_modal_pokok_baru` DECIMAL(15,2), IN `p_alasan` TEXT, IN `p_user_id` INT)   BEGIN
+    DECLARE v_modal_pokok_sebelum DECIMAL(15,2)$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `update_modal_pokok_manual` (IN `p_cooperative_id` INT, IN `p_modal_pokok_baru` DECIMAL(15,2), IN `p_alasan` TEXT, IN `p_user_id` INT)  BEGIN
-    DECLARE v_modal_pokok_sebelum DECIMAL(15,2);
-    DECLARE v_persentase_perubahan DECIMAL(5,2);
-    
-    
-    SELECT modal_pokok INTO v_modal_pokok_sebelum
-    FROM cooperatives
-    WHERE id = p_cooperative_id;
-    
-    
-    IF v_modal_pokok_sebelum > 0 THEN
-        SET v_persentase_perubahan = ((p_modal_pokok_baru - v_modal_pokok_sebelum) / v_modal_pokok_sebelum) * 100;
-    ELSE
-        SET v_persentase_perubahan = 0.00;
-    END IF;
-    
-    
-    UPDATE cooperatives 
-    SET modal_pokok = p_modal_pokok_baru, updated_at = CURRENT_TIMESTAMP()
-    WHERE id = p_cooperative_id;
-    
-    
-    INSERT INTO modal_pokok_changes (
-        cooperative_id, modal_pokok_lama, modal_pokok_baru, persentase_perubahan,
-        tanggal_efektif, perubahan_type, referensi_id, alasan_perubahan, user_id
-    ) VALUES (
-        p_cooperative_id, v_modal_pokok_sebelum, p_modal_pokok_baru, v_persentase_perubahan,
-        CURDATE(), 'manual', NULL, p_alasan, p_user_id
-    );
-END$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_modal_pokok_manual` (IN `p_cooperative_id` INT, IN `p_modal_pokok_baru` DECIMAL(15,2), IN `p_alasan` TEXT, IN `p_user_id` INT)   BEGIN
+    DECLARE v_modal_pokok_sebelum DECIMAL(15,2)$$
 
 DELIMITER ;
 
@@ -296,7 +228,7 @@ CREATE TABLE `cooperatives` (
 --
 
 INSERT INTO `cooperatives` (`id`, `nama`, `jenis`, `badan_hukum`, `status_badan_hukum`, `tanggal_status_terakhir`, `status_notes`, `tanggal_pendirian`, `npwp`, `nomor_bh`, `nib`, `nik_koperasi`, `modal_pokok`, `alamat_legal`, `kontak_resmi`, `logo`, `created_by`, `created_at`, `updated_at`, `province_id`, `regency_id`, `district_id`, `village_id`) VALUES
-(4, 'KSP POLRES SAMOSIR', '\"KSP\"', 'terdaftar', 'belum_terdaftar', NULL, NULL, '2025-12-25', '3171011001900001', NULL, NULL, NULL, '0.00', 'Jl. Danau Toba No. 03', '081211223344', NULL, 5, '2026-02-04 17:30:29', '2026-02-04 17:30:29', 3, 40, 590, 10617);
+(4, 'KSP POLRES SAMOSIR', '\"KSP\"', 'terdaftar', 'belum_terdaftar', NULL, NULL, '2025-12-25', '3171011001900001', NULL, NULL, NULL, 0.00, 'Jl. Danau Toba No. 03', '081211223344', NULL, 5, '2026-02-04 17:30:29', '2026-02-04 17:30:29', 3, 40, 590, 10617);
 
 -- --------------------------------------------------------
 
@@ -346,7 +278,7 @@ CREATE TABLE `cooperative_financial_settings` (
 --
 
 INSERT INTO `cooperative_financial_settings` (`id`, `cooperative_id`, `tahun_buku`, `periode_mulai`, `periode_akhir`, `simpanan_pokok`, `simpanan_wajib`, `bunga_pinjaman`, `denda_telat`, `periode_shu`, `status`, `created_at`, `updated_at`, `created_by`) VALUES
-(4, 4, 2026, '2026-01-01', '2026-12-31', '100000.00', '50000.00', '12.00', '2.00', 'yearly', 'active', '2026-02-04 17:30:29', '2026-02-04 17:30:29', 5);
+(4, 4, '2026', '2026-01-01', '2026-12-31', 100000.00, 50000.00, 12.00, 2.00, 'yearly', 'active', '2026-02-04 17:30:29', '2026-02-04 17:30:29', 5);
 
 -- --------------------------------------------------------
 
